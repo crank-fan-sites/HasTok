@@ -21,40 +21,25 @@ const directus = createDirectus(process.env.DIRECTUS_URL || "http://localhost:80
 
 const Home: NextPage<HomeProps> = ({ tiktokVideos }) => {
   return (
-    <div className="max-w-6xl mx-auto p-5">
-      <div className="container mx-auto p-4">
-        <div className="grid grid-cols-3">
-          <div className="bg-gray-200 p-4">Post 1</div>
-          <div className="bg-gray-200 p-4">Post 2</div>
-          <div className="bg-gray-200 p-4">Post 3</div>
-          <div className="bg-gray-200 p-4">Post 4</div>
-          <div className="bg-gray-200 p-4">Post 5</div>
-          <div className="bg-gray-200 p-4">Post 6</div>
-        </div>
-      </div>
-      <h1 className="text-2xl font-bold mb-5">TikTok Videos</h1>
+    <div>
       <TiktokVideos feed={tiktokVideos} />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {['Post 1', 'Post 2', 'Post 3', 'Post 4', 'Post 5', 'Post 6'].map((post, index) => (
-          <div key={index} className="bg-gray-100 p-5 text-center">
-            {post}
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
 
 export const getStaticProps: GetStaticProps = async () => {
   await directus.login(process.env.DIRECTUS_ADMIN_EMAIL, process.env.DIRECTUS_ADMIN_PASSWORD);
-  // Call the updateMedia API route
-  // await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/updateMedia`);
 
-  // Fetch tiktok_videos from Directus
+  // Call the update API routes
+  await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/lamatok/updateUser`);
+  await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/lamatok/updateMedia`);
+
+  // Fetch tiktok_videos from Directus with author relationship, sorted by latest
   const response = await directus.request(
     readItems('tiktok_videos', {
       limit: -1, // Fetch all items
-      // Add any necessary filters or sorting options
+      fields: ['*', 'author.*'], // Include all fields from tiktok_videos and author
+      sort: ['-created'], // Sort by created in descending order (latest first)
     })
   );
 
