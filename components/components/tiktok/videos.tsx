@@ -7,9 +7,9 @@ interface TiktokVideosProps {
 
 const TiktokVideos: NextPage<TiktokVideosProps> = ({ feed }) => {
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', margin: '0 -8px' }}>
+    <div className="flex flex-wrap -m-2">
       {feed.map((video, index) => (
-        <div key={index} style={{ width: '100%', padding: '8px', boxSizing: 'border-box', '@media (min-width: 640px)': { width: '50%' }, '@media (min-width: 1024px)': { width: '33.333%' } }}>
+        <div key={index} className="w-full p-2 sm:w-1/2 md:w-1/3 lg:w-1/4">
           <TikTokVideo
             tiktok_id={video.tiktok_id}
             author={video.author}
