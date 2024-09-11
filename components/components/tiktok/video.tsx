@@ -1,11 +1,15 @@
 import type { NextPage } from "next";
 import { FaHeart, FaComment, FaShare } from "react-icons/fa";
 import { BsFillPlayFill } from "react-icons/bs";
+import { formatDistanceToNow } from "date-fns";
+import millify from "millify";
 
 interface TikTokVideoProps {
   tiktok_id: string;
   author: {
     nickname: string;
+    unique_id: string;
+    avatar: string;
   };
   created: string;
   desc: string;
@@ -31,7 +35,7 @@ const TikTokVideo: NextPage<TikTokVideoProps> = ({
 }) => {
   return (
     <div className="relative h-auto">
-      <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden">
+      <div className="border border-gray-700 rounded-lg shadow-sm overflow-hidden flex flex-col h-full bg-gray-800 text-white">
         <div className="relative">
           <a 
             href={`https://tiktok.com/@${author.unique_id}/video/${tiktok_id}`}
@@ -44,8 +48,8 @@ const TikTokVideo: NextPage<TikTokVideoProps> = ({
             </div>
           </a>
         </div>
-        <div className="p-4">
-          <div className="flex items-center mb-2">
+        <div className="p-4 flex flex-col flex-grow">
+          <div className="flex items-center justify-between mb-2">
             <a 
               href={`https://tiktok.com/@${author.unique_id}`}
               target="_blank"
@@ -53,27 +57,29 @@ const TikTokVideo: NextPage<TikTokVideoProps> = ({
               className="flex items-center"
             >
               <img src={author.avatar} alt={author.unique_id} className="w-10 h-10 rounded-full mr-2" />
-              <h2 className="font-bold text-lg">{author.nickname}</h2>
+              <h2 className="font-bold text-lg text-white">{author.nickname}</h2>
             </a>
           </div>
-          <p className="text-sm mb-2">{desc}</p>
-          <p className="text-xs text-gray-500 mb-4">Created: {new Date(created).toLocaleDateString()}</p>
-          <div className="flex justify-between text-gray-600">
-            <div className="flex items-center">
-              <FaHeart className="mr-1" />
-              <span>{collected}</span>
-            </div>
-            <div className="flex items-center">
-              <FaComment className="mr-1" />
-              <span>{comments}</span>
-            </div>
-            <div className="flex items-center">
-              <BsFillPlayFill className="mr-1" />
-              <span>{plays}</span>
-            </div>
-            <div className="flex items-center">
-              <FaShare className="mr-1" />
-              <span>{shares}</span>
+            <div className="text-xs text-gray-400">{formatDistanceToNow(new Date(created), { addSuffix: true })}</div>
+          <p className="text-sm mb-4 overflow-hidden max-h-[8.4em] line-clamp-6 text-gray-300 italic">{desc}</p>
+          <div className="mt-auto">
+            <div className="grid grid-cols-2 ml-5 gap-x-4 gap-y-2 font-semibold">
+              <div className="flex items-center">
+                <BsFillPlayFill className="mr-1 text-green-500 text-sm" />
+                <span className="">{millify(plays)}</span>
+              </div>
+              <div className="flex items-center">
+                <FaHeart className="mr-1 text-green-500 text-xs" />
+                <span className="text-md">{millify(collected)}</span>
+              </div>
+              <div className="flex items-center">
+                <FaComment className="mr-1 text-green-500 text-xs" />
+                <span className="text-md">{millify(comments)}</span>
+              </div>
+              <div className="flex items-center">
+                <FaShare className="mr-1 text-green-500 text-xs" />
+                <span className="text-md">{millify(shares)}</span>
+              </div>
             </div>
           </div>
         </div>

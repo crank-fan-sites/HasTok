@@ -21,8 +21,10 @@ const directus = createDirectus(process.env.DIRECTUS_URL || "http://localhost:80
 
 const Home: NextPage<HomeProps> = ({ tiktokVideos }) => {
   return (
-    <div>
-      <TiktokVideos feed={tiktokVideos} />
+    <div className="bg-scanlines bg-black">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <TiktokVideos feed={tiktokVideos} />
+      </div>
     </div>
   );
 };
