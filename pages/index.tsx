@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import type { NextPage, GetStaticProps, GetStaticPaths } from "next";
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { createDirectus, rest, authentication, readItems, aggregate } from '@directus/sdk';
 
 import TiktokVideos from "@/components/components/tiktok/videos";
@@ -15,6 +15,7 @@ interface HomeProps {
   initialVideos: TikTokVideo[];
   pageSize: number;
   totalVideos: number;
+  initialSortBy: 'created' | 'plays';
 }
 
 // Initialize Directus client
@@ -22,18 +23,46 @@ const directus = createDirectus(process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://
   .with(rest())
   .with(authentication());
 
-const Home: NextPage<HomeProps> = ({ initialVideos, pageSize, totalVideos }) => {
+const Home: NextPage<HomeProps> = ({ initialVideos, pageSize, totalVideos, initialSortBy }) => {
   const [videos, setVideos] = useState(initialVideos);
   const [hasMore, setHasMore] = useState(videos.length < totalVideos);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [sortBy, setSortBy] = useState<'created' | 'plays'>(initialSortBy);
+  const [isSwitchingSort, setIsSwitchingSort] = useState(false);
+
+  const fetchVideos = useCallback(async (newSortBy: 'created' | 'plays') => {
+    setIsSwitchingSort(true);
+    try {
+      const response = await fetch(`/api/videos?page=1&pageSize=${pageSize}&sortBy=${newSortBy}`);
+      if (!response.ok) throw new Error('Failed to fetch');
+      const newVideos = await response.json();
+      setVideos(newVideos);
+      setPage(1);
+      setHasMore(newVideos.length < totalVideos);
+    } catch (error) {
+      console.error('Error fetching videos:', error);
+    } finally {
+      setIsSwitchingSort(false);
+    }
+  }, [pageSize, totalVideos]);
+
+  useEffect(() => {
+    fetchVideos(sortBy);
+  }, [sortBy, fetchVideos]);
+
+  const changeSortBy = (newSortBy: 'created' | 'plays') => {
+    if (newSortBy !== sortBy) {
+      setSortBy(newSortBy);
+    }
+  };
 
   const loadMoreVideos = useCallback(async () => {
     if (isLoading || !hasMore) return;
     setIsLoading(true);
     const nextPage = page + 1;
     try {
-      const response = await fetch(`/api/videos?page=${nextPage}&pageSize=${pageSize}`);
+      const response = await fetch(`/api/videos?page=${nextPage}&pageSize=${pageSize}&sortBy=${sortBy}`);
       if (!response.ok) throw new Error('Failed to fetch');
       const newVideos = await response.json();
 
@@ -50,7 +79,7 @@ const Home: NextPage<HomeProps> = ({ initialVideos, pageSize, totalVideos }) => 
     } finally {
       setIsLoading(false);
     }
-  }, [page, pageSize, isLoading, hasMore, videos.length, totalVideos]);
+  }, [page, pageSize, isLoading, hasMore, videos.length, totalVideos, sortBy]);
 
   return (
     <div className="bg-scanlines bg-black">
@@ -72,9 +101,38 @@ const Home: NextPage<HomeProps> = ({ initialVideos, pageSize, totalVideos }) => 
       </div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-4 text-center text-white">
+          <button
+            onClick={() => changeSortBy('created')}
+            className={`px-4 py-2 rounded mr-2 ${
+              sortBy === 'created' ? 'bg-green-500 text-white' : 'bg-gray-300 text-black'
+            }`}
+            disabled={isSwitchingSort}
+          >
+            Sort by Date
+          </button>
+          <button
+            onClick={() => changeSortBy('plays')}
+            className={`px-4 py-2 rounded ${
+              sortBy === 'plays' ? 'bg-green-500 text-white' : 'bg-gray-300 text-black'
+            }`}
+            disabled={isSwitchingSort}
+          >
+            Sort by Popularity
+          </button>
+        </div>
+        <div className="mb-4 text-center text-white">
           Showing <b className="text-lg text-green-500">{videos.length}</b> of <b className="text-lg text-green-500">{totalVideos}</b> videos
         </div>
-        <TiktokVideos feed={videos} />
+        {isSwitchingSort ? (
+          <div className="text-center text-white">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-500"></div>
+            <p className="mt-2">Switching sort order...</p>
+          </div>
+        ) : isLoading && videos.length === 0 ? (
+          <div className="text-center text-white">Loading...</div>
+        ) : (
+          <TiktokVideos feed={videos} />
+        )}
         {hasMore && (
           <div className="mt-8 flex justify-center">
             <button
@@ -104,13 +162,14 @@ export const getStaticProps: GetStaticProps = async () => {
     await directus.login(process.env.DIRECTUS_ADMIN_EMAIL, process.env.DIRECTUS_ADMIN_PASSWORD);
 
     const pageSize = 24;
+    const initialSortBy = 'created';
 
     console.log('Fetching initial videos...');
     const initialVideos = await directus.request(
       readItems('tiktok_videos', {
         limit: pageSize,
         fields: ['*', 'author.*'],
-        sort: ['-created'],
+        sort: [`-${initialSortBy}`],
       })
     );
     console.log(`Fetched ${initialVideos.length} initial videos`);
@@ -139,6 +198,7 @@ export const getStaticProps: GetStaticProps = async () => {
         initialVideos: initialVideos || [],
         pageSize: pageSize,
         totalVideos: totalVideos,
+        initialSortBy: initialSortBy,
       },
       revalidate: 60 * 5, // 5 min
     };

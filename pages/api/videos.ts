@@ -10,7 +10,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { page, pageSize } = req.query;
+  const { page, pageSize, sortBy } = req.query;
+
+  // Validate sortBy parameter
+  const validSortBy = ['created', 'plays'].includes(sortBy as string) ? sortBy : 'created';
 
   try {
     await directus.login(process.env.DIRECTUS_ADMIN_EMAIL, process.env.DIRECTUS_ADMIN_PASSWORD);
@@ -20,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         limit: Number(pageSize),
         page: Number(page),
         fields: ['*', 'author.*'],
-        sort: ['-created'],
+        sort: [`-${validSortBy}`], // Use the sortBy parameter here
       })
     );
 
