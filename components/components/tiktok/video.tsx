@@ -33,6 +33,15 @@ const TikTokVideo: NextPage<TikTokVideoProps> = ({
   cover,
   duration,
 }) => {
+  const formatDuration = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    if (minutes === 0) {
+      return `${remainingSeconds}s`;
+    }
+    return `${minutes}m ${remainingSeconds}s`;
+  };
+
   return (
     <div className="relative h-auto">
       <div className="border border-gray-700 rounded-lg shadow-sm overflow-hidden flex flex-col h-full bg-gray-800 text-white">
@@ -43,8 +52,11 @@ const TikTokVideo: NextPage<TikTokVideoProps> = ({
             rel="noopener noreferrer"
           >
             <img src={cover} alt={`TikTok by ${author.nickname}`} className="w-full h-64 object-cover" />
-            <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">
-              {duration}s
+            <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-sm px-1 rounded">
+              {formatDistanceToNow(new Date(created), { addSuffix: true })}
+            </div>
+            <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-sm px-1 rounded">
+              {formatDuration(duration)}
             </div>
           </a>
         </div>
@@ -57,10 +69,9 @@ const TikTokVideo: NextPage<TikTokVideoProps> = ({
               className="flex items-center"
             >
               <img src={author.avatar} alt={author.unique_id} className="w-10 h-10 rounded-full mr-2" />
-              <h2 className="font-bold text-lg text-white">{author.nickname}</h2>
+              <h2 className="font-bold text-lg text-white truncate max-w-[200px]">{author.nickname}</h2>
             </a>
           </div>
-            <div className="text-xs text-gray-400">{formatDistanceToNow(new Date(created), { addSuffix: true })}</div>
           <p className="text-sm mb-4 overflow-hidden max-h-[8.4em] line-clamp-6 text-gray-300 italic">{desc}</p>
           <div className="mt-auto">
             <div className="grid grid-cols-2 ml-5 gap-x-4 gap-y-2 font-semibold">

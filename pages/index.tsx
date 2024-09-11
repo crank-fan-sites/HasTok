@@ -54,8 +54,24 @@ const Home: NextPage<HomeProps> = ({ initialVideos, pageSize, totalVideos }) => 
 
   return (
     <div className="bg-scanlines bg-black">
+      <div className="relative w-full">
+        <div className="w-full aspect-[680/130]">
+          <div 
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: "url('/images/top-thin-rect.jpg')" }}
+          ></div>
+          <div className="absolute inset-0 bg-black bg-opacity-50"></div> {/* Full image overlay */}
+        </div>
+        <div className="absolute inset-x-0 bottom-0 bg-black bg-opacity-50">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-green-500 tracking-wide py-2">
+              HasTok
+            </h1>
+          </div>
+        </div>
+      </div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mt-4 mb-4 text-center text-white">
+        <div className="mb-4 text-center text-white">
           Showing <b className="text-lg text-green-500">{videos.length}</b> of <b className="text-lg text-green-500">{totalVideos}</b> videos
         </div>
         <TiktokVideos feed={videos} />
@@ -70,7 +86,7 @@ const Home: NextPage<HomeProps> = ({ initialVideos, pageSize, totalVideos }) => 
             </button>
           </div>
         )}
-        <div className="mt-4 mb-4 text-center text-white">
+        <div className="mt-3 mb-4 text-center text-white">
           Showing <b className="text-lg text-green-500">{videos.length}</b> of <b className="text-lg text-green-500">{totalVideos}</b> videos
         </div>
         {!hasMore && videos.length < totalVideos && (
