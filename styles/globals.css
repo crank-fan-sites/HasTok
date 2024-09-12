@@ -26,6 +26,10 @@ body {
   }
 }
 
+.bg-custom-purple {
+  background-color: #18012d; /* Adjust this hex code to your preferred shade of dark purple */
+}
+
 .text-shadow {
   text-shadow: 2px 2px 4px rgba(0,0,0,4.5);
 }

@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import type { NextPage, GetStaticProps, GetStaticPaths } from "next";
 import { useState, useCallback, useEffect } from 'react';
 import { createDirectus, rest, authentication, readItems, aggregate } from '@directus/sdk';
@@ -82,16 +81,15 @@ const Home: NextPage<HomeProps> = ({ initialVideos, pageSize, totalVideos, initi
   }, [page, pageSize, isLoading, hasMore, videos.length, totalVideos, sortBy]);
 
   return (
-    <div className="bg-scanlines bg-black">
+    <div className="bg-scanlines bg-custom-purple"> {/* Base background */}
       <div className="relative w-full">
-        <div className="w-full aspect-[680/130]">
+        <div className="w-full aspect-[680/130] relative"> {/* Added relative positioning */}
           <div 
-            className="absolute inset-0 bg-cover bg-center"
+            className="absolute inset-0 bg-cover bg-center z-10" 
             style={{ backgroundImage: "url('/images/top-thin-rect.jpg')" }}
           ></div>
-          <div className="absolute inset-0 bg-black bg-opacity-50"></div> {/* Full image overlay */}
         </div>
-        <div className="absolute inset-x-0 bottom-0 bg-black bg-opacity-50">
+        <div className="absolute inset-x-0 bottom-0 bg-black bg-opacity-70 z-30"> {/* Higher opacity, highest z-index */}
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-green-500 tracking-wide py-2">
               HasTok
