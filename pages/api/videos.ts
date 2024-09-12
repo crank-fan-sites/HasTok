@@ -10,20 +10,48 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { page, pageSize, sortBy } = req.query;
+  const { page, pageSize, sortBy, dateFilter } = req.query;
 
   // Validate sortBy parameter
   const validSortBy = ['created', 'plays'].includes(sortBy as string) ? sortBy : 'created';
 
+  // Calculate the date for filtering
+  let filterDate;
+  const day = 24 * 60 * 60 * 1000;
+  switch (dateFilter) {
+    case 'day':
+      filterDate = new Date(Date.now() - day);
+      break;
+    case 'week':
+      filterDate = new Date(Date.now() - 7 * day);
+      break;
+    case 'month':
+      filterDate = new Date(Date.now() - 30 * day);
+      break;
+    case 'year':
+      filterDate = new Date(Date.now() - 365 * day);
+      break;
+    default:
+      filterDate = null;
+  }
+
   try {
     await directus.login(process.env.DIRECTUS_ADMIN_EMAIL, process.env.DIRECTUS_ADMIN_PASSWORD);
+
+    const filter: any = {};
+    if (filterDate) {
+      filter.created = {
+        _gte: filterDate.toISOString(),
+      };
+    }
 
     const videos = await directus.request(
       readItems('tiktok_videos', {
         limit: Number(pageSize),
         page: Number(page),
         fields: ['*', 'author.*'],
-        sort: [`-${validSortBy}`], // Use the sortBy parameter here
+        sort: [`-${validSortBy}`],
+        filter: filter,
       })
     );
 

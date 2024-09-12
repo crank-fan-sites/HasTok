@@ -12,17 +12,17 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [sortBy, setSortBy] = useState<'created' | 'plays'>(initialSortBy);
   const [isSwitchingSort, setIsSwitchingSort] = useState(false);
+  const [dateFilter, setDateFilter] = useState<'day' | 'week' | 'month' | 'year' | 'all'>('all');
   
   useEffect(() => {
     setVideos(initialVideos || []);
     setHasMore((initialVideos?.length || 0) < totalVideos);
   }, [initialVideos, totalVideos]);
 
-  // Similar to loadMoreVideos. For initial load
-  const fetchVideos = useCallback(async (newSortBy: 'created' | 'plays') => {
+  const fetchVideos = useCallback(async (newSortBy: 'created' | 'plays', newDateFilter: 'day' | 'week' | 'month' | 'year' | 'all') => {
     setIsSwitchingSort(true);
     try {
-      const response = await fetch(`/api/videos?page=1&pageSize=${pageSize}&sortBy=${newSortBy}`);
+      const response = await fetch(`/api/videos?page=1&pageSize=${pageSize}&sortBy=${newSortBy}&dateFilter=${newDateFilter}`);
       if (!response.ok) throw new Error('Failed to fetch');
       const newVideos = await response.json();
       setVideos(newVideos);
@@ -36,8 +36,8 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
   }, [pageSize, totalVideos]);
 
   useEffect(() => {
-    fetchVideos(sortBy);
-  }, [sortBy, fetchVideos]);
+    fetchVideos(sortBy, dateFilter);
+  }, [sortBy, dateFilter, fetchVideos]);
 
   const changeSortBy = (newSortBy: 'created' | 'plays') => {
     if (newSortBy !== sortBy) {
@@ -45,13 +45,18 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
     }
   };
 
-  // Similar to fetchVideos. For loading more videos when the user scrolls to the bottom of the page
+  const changeDateFilter = (newDateFilter: 'day' | 'week' | 'month' | 'year' | 'all') => {
+    if (newDateFilter !== dateFilter) {
+      setDateFilter(newDateFilter);
+    }
+  };
+
   const loadMoreVideos = useCallback(async () => {
     if (isLoading || !hasMore) return;
     setIsLoading(true);
     const nextPage = page + 1;
     try {
-      const response = await fetch(`/api/videos?page=${nextPage}&pageSize=${pageSize}&sortBy=${sortBy}`);
+      const response = await fetch(`/api/videos?page=${nextPage}&pageSize=${pageSize}&sortBy=${sortBy}&dateFilter=${dateFilter}`);
       if (!response.ok) throw new Error('Failed to fetch');
       const newVideos = await response.json();
 
@@ -68,7 +73,7 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [page, pageSize, isLoading, hasMore, videos.length, totalVideos, sortBy]);
+  }, [page, pageSize, isLoading, hasMore, videos.length, totalVideos, sortBy, dateFilter]);
 
   return (
     <div className="bg-scanlines bg-custom-purple"> {/* Base background */}
@@ -81,7 +86,7 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
         </div>
         <div className="absolute inset-x-0 bottom-0 bg-black bg-opacity-70 z-30"> {/* Higher opacity, highest z-index */}
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-green-500 tracking-wide py-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-blue-500 tracking-wide py-2">
               HasTok
             </h1>
           </div>
@@ -106,6 +111,53 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
             disabled={isSwitchingSort}
           >
             Sort by Popularity
+          </button>
+        </div>
+        <div className="mb-4 text-center text-white">
+          <button
+            onClick={() => changeDateFilter('day')}
+            className={`px-3 py-1 text-md rounded mr-2 ${
+              dateFilter === 'day' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'
+            }`}
+            disabled={isSwitchingSort}
+          >
+            Day
+          </button>
+          <button
+            onClick={() => changeDateFilter('week')}
+            className={`px-3 py-1 text-md rounded mr-2 ${
+              dateFilter === 'week' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'
+            }`}
+            disabled={isSwitchingSort}
+          >
+            Week
+          </button>
+          <button
+            onClick={() => changeDateFilter('month')}
+            className={`px-3 py-1 text-md rounded mr-2 ${
+              dateFilter === 'month' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'
+            }`}
+            disabled={isSwitchingSort}
+          >
+            Month
+          </button>
+          <button
+            onClick={() => changeDateFilter('year')}
+            className={`px-3 py-1 text-md rounded mr-2 ${
+              dateFilter === 'year' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'
+            }`}
+            disabled={isSwitchingSort}
+          >
+            Year
+          </button>
+          <button
+            onClick={() => changeDateFilter('all')}
+            className={`px-3 py-1 text-md rounded ${
+              dateFilter === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'
+            }`}
+            disabled={isSwitchingSort}
+          >
+            All
           </button>
         </div>
         <div className="mb-4 text-center text-white">
