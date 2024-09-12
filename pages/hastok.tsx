@@ -3,26 +3,22 @@ import { useState, useCallback, useEffect } from 'react';
 import TiktokVideos from "@/components/components/tiktok/videos";
 import { HasTokProps, TikTokVideo } from '../types/tiktok';
 
-interface TikTokVideo {
-  id: string;
-  // Add other fields as needed
-}
+const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
+  const { initialVideos, totalVideos, pageSize, initialSortBy } = socialMediaData.tiktok;
 
-interface HasTokProps {
-  initialVideos: TikTokVideo[];
-  pageSize: number;
-  totalVideos: number;
-  initialSortBy: 'created' | 'plays';
-}
-
-const HasTok: NextPage<HasTokProps> = ({ initialVideos, pageSize, totalVideos, initialSortBy }) => {
-  const [videos, setVideos] = useState(initialVideos);
-  const [hasMore, setHasMore] = useState(videos.length < totalVideos);
+  const [videos, setVideos] = useState<TikTokVideo[]>(initialVideos || []);
+  const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [sortBy, setSortBy] = useState<'created' | 'plays'>(initialSortBy);
   const [isSwitchingSort, setIsSwitchingSort] = useState(false);
+  
+  useEffect(() => {
+    setVideos(initialVideos || []);
+    setHasMore((initialVideos?.length || 0) < totalVideos);
+  }, [initialVideos, totalVideos]);
 
+  // Similar to loadMoreVideos. For initial load
   const fetchVideos = useCallback(async (newSortBy: 'created' | 'plays') => {
     setIsSwitchingSort(true);
     try {
@@ -31,7 +27,7 @@ const HasTok: NextPage<HasTokProps> = ({ initialVideos, pageSize, totalVideos, i
       const newVideos = await response.json();
       setVideos(newVideos);
       setPage(1);
-      setHasMore(newVideos.length < totalVideos);
+      setHasMore((newVideos?.length || 0) < totalVideos);
     } catch (error) {
       console.error('Error fetching videos:', error);
     } finally {
@@ -49,6 +45,7 @@ const HasTok: NextPage<HasTokProps> = ({ initialVideos, pageSize, totalVideos, i
     }
   };
 
+  // Similar to fetchVideos. For loading more videos when the user scrolls to the bottom of the page
   const loadMoreVideos = useCallback(async () => {
     if (isLoading || !hasMore) return;
     setIsLoading(true);
@@ -58,10 +55,10 @@ const HasTok: NextPage<HasTokProps> = ({ initialVideos, pageSize, totalVideos, i
       if (!response.ok) throw new Error('Failed to fetch');
       const newVideos = await response.json();
 
-      if (newVideos.length > 0) {
+      if (newVideos && newVideos.length > 0) {
         setVideos(prevVideos => [...prevVideos, ...newVideos]);
         setPage(nextPage);
-        setHasMore(videos.length + newVideos.length < totalVideos);
+        setHasMore((videos.length + newVideos.length) < totalVideos);
       } else {
         setHasMore(false);
       }

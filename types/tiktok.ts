@@ -1,11 +1,23 @@
 export interface TikTokVideo {
   id: string;
-  // Add other fields as needed
+  // Add other TikTok-specific fields as needed
+}
+
+export interface TikTokPapiData {
+  initialVideos: TikTokVideo[];
+  totalVideos: number;
+  pageSize: number;
+  initialSortBy: 'created' | 'plays';
+}
+
+export interface SocialMediaData {
+  tiktok: TikTokPapiData;
+  // Add other social media platforms here as needed
+  // For example:
+  // instagram: { ... };
+  // youtube: { ... };
 }
 
 export interface HasTokProps {
-  initialVideos: TikTokVideo[];
-  pageSize: number;
-  totalVideos: number;
-  initialSortBy: 'created' | 'plays';
+  socialMediaData: SocialMediaData;
 }
