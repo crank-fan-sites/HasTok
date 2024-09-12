@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { page, pageSize, sortBy, dateFilter } = req.query;
+  const { page, pageSize, sortBy, dateFilter, username } = req.query;
 
   // Validate sortBy parameter
   const validSortBy = ['created', 'plays'].includes(sortBy as string) ? sortBy : 'created';
@@ -42,6 +42,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (filterDate) {
       filter.created = {
         _gte: filterDate.toISOString(),
+      };
+    }
+    if (username) {
+      filter.author = {
+        unique_id: {
+          _eq: username
+        }
       };
     }
 

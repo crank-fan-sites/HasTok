@@ -4,7 +4,7 @@ import TiktokVideos from "@/components/components/tiktok/videos";
 import { HasTokProps, TikTokVideo } from '../types/tiktok';
 
 const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
-  const { initialVideos, totalVideos, pageSize, initialSortBy } = socialMediaData.tiktok;
+  const { initialVideos, totalVideos, pageSize, initialSortBy, username } = socialMediaData.tiktok;
 
   const [videos, setVideos] = useState<TikTokVideo[]>(initialVideos || []);
   const [hasMore, setHasMore] = useState(false);
@@ -22,7 +22,7 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
   const fetchVideos = useCallback(async (newSortBy: 'created' | 'plays', newDateFilter: 'day' | 'week' | 'month' | 'year' | 'all') => {
     setIsSwitchingSort(true);
     try {
-      const response = await fetch(`/api/videos?page=1&pageSize=${pageSize}&sortBy=${newSortBy}&dateFilter=${newDateFilter}`);
+      const response = await fetch(`/api/videos?page=1&pageSize=${pageSize}&sortBy=${newSortBy}&dateFilter=${newDateFilter}${username ? `&username=${username}` : ''}`);
       if (!response.ok) throw new Error('Failed to fetch');
       const newVideos = await response.json();
       setVideos(newVideos);
@@ -33,7 +33,7 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
     } finally {
       setIsSwitchingSort(false);
     }
-  }, [pageSize, totalVideos]);
+  }, [pageSize, totalVideos, username]);
 
   useEffect(() => {
     fetchVideos(sortBy, dateFilter);
@@ -56,7 +56,7 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
     setIsLoading(true);
     const nextPage = page + 1;
     try {
-      const response = await fetch(`/api/videos?page=${nextPage}&pageSize=${pageSize}&sortBy=${sortBy}&dateFilter=${dateFilter}`);
+      const response = await fetch(`/api/videos?page=${nextPage}&pageSize=${pageSize}&sortBy=${sortBy}&dateFilter=${dateFilter}${username ? `&username=${username}` : ''}`);
       if (!response.ok) throw new Error('Failed to fetch');
       const newVideos = await response.json();
 
@@ -73,7 +73,7 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [page, pageSize, isLoading, hasMore, videos.length, totalVideos, sortBy, dateFilter]);
+  }, [page, pageSize, isLoading, hasMore, videos.length, totalVideos, sortBy, dateFilter, username]);
 
   return (
     <div className="bg-scanlines bg-custom-purple"> {/* Base background */}

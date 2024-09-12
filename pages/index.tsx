@@ -9,7 +9,9 @@ const Home: NextPage<HasTokProps> = (props) => {
 
 export const getStaticProps: GetStaticProps<HasTokProps> = async () => {
   try {
-    const socialMediaData = await getSocialMediaData();
+    // If you want to manually set a username, you can do it here
+    const username = null; // or 'someusername' if you want to filter
+    const socialMediaData = await getSocialMediaData(username);
 
     return {
       props: {
@@ -27,6 +29,7 @@ export const getStaticProps: GetStaticProps<HasTokProps> = async () => {
             totalVideos: 0,
             pageSize: 24,
             initialSortBy: 'created',
+            username: null, // or 'someusername' if you set it above
           },
         },
       },

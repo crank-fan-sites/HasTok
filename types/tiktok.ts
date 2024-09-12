@@ -8,6 +8,7 @@ export interface TikTokPapiData {
   totalVideos: number;
   pageSize: number;
   initialSortBy: 'created' | 'plays';
+  username?: string;  // Add this line
 }
 
 export interface SocialMediaData {
@@ -20,4 +21,5 @@ export interface SocialMediaData {
 
 export interface HasTokProps {
   socialMediaData: SocialMediaData;
+  username?: string;
 }
