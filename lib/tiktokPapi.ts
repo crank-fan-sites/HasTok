@@ -5,16 +5,16 @@ const directus = createDirectus(process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://
   .with(rest())
   .with(authentication());
 
-export async function getTikTokData(pageSize: number, sortBy: 'created' | 'plays', username: string | null): Promise<TikTokPapiData> {
+export async function getTikTokData(pageSize: number, sortBy: 'created' | 'plays', usernames: string[] | null): Promise<TikTokPapiData> {
   await directus.login(process.env.DIRECTUS_ADMIN_EMAIL, process.env.DIRECTUS_ADMIN_PASSWORD);
 
-  console.log('Fetching TikTok data...', username ? `for user: ${username}` : 'for all users');
+  console.log('Fetching TikTok data...', usernames ? `for users: ${usernames.join(', ')}` : 'for all users');
 
   const filter: any = {};
-  if (username) {
+  if (usernames && usernames.length > 0) {
     filter['author'] = {
       unique_id: {
-        _eq: username
+        _in: usernames
       }
     };
   }
@@ -48,7 +48,7 @@ export async function getTikTokData(pageSize: number, sortBy: 'created' | 'plays
       totalVideos,
       pageSize,
       initialSortBy: sortBy,
-      username: username || null,
+      usernames: usernames || null,
     };
   } catch (error) {
     console.error('Error fetching TikTok data:', error);

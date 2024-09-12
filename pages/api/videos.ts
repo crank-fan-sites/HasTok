@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { page, pageSize, sortBy, dateFilter, username } = req.query;
+  const { page, pageSize, sortBy, dateFilter, usernames } = req.query;
 
   // Validate sortBy parameter
   const validSortBy = ['created', 'plays'].includes(sortBy as string) ? sortBy : 'created';
@@ -44,13 +44,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         _gte: filterDate.toISOString(),
       };
     }
-    if (username) {
+    if (usernames) {
       filter.author = {
         unique_id: {
-          _eq: username
+          _in: usernames
         }
       };
     }
+
+    console.log('Filter:', JSON.stringify(filter, null, 2)); // Debug log
 
     const videos = await directus.request(
       readItems('tiktok_videos', {
@@ -61,6 +63,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         filter: filter,
       })
     );
+
+    console.log(`Fetched ${videos.length} videos`); // Debug log
 
     res.status(200).json(videos);
   } catch (error) {
