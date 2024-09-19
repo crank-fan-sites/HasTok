@@ -195,6 +195,12 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
           </p>
         )}
       </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <p className="text-center text-red-400">
+          <a href="/">Home</a> | <a href="/about">About</a> | <a href="https://twitter.com/hasansproducer">HasanAbi Community Twitter</a> | <a href="https://tiktok.com/hasansproducer">HasanAbi Community TikTok</a>
+        </p>
+      </div>
     </div>
   );
 };
