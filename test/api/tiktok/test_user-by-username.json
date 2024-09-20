@@ -1,0 +1,65 @@
+{
+  "users": {
+    "litupemma": {
+      "id": "7328637668469851182",
+      "shortId": "",
+      "uniqueId": "litupemma",
+      "nickname": "Emma",
+      "avatarLarger": "https://p19-pu-sign-useast8.tiktokcdn-us.com/tos-useast5-avt-0068-tx/7069a58019756c93c854e486d349e737~c5_1080x1080.jpeg?lk3s=a5d48078&nonce=68335&refresh_token=c97fe7764b6f8965c7970beef78edbee&x-expires=1726182000&x-signature=fygbvQiILf8Fg92GcDhiNE2LdTM%3D&shp=a5d48078&shcp=81f88b70",
+      "avatarMedium": "https://p19-pu-sign-useast8.tiktokcdn-us.com/tos-useast5-avt-0068-tx/7069a58019756c93c854e486d349e737~c5_720x720.jpeg?lk3s=a5d48078&nonce=82443&refresh_token=552ad581f8605a14d3aef78284e3591c&x-expires=1726182000&x-signature=0e1%2BWM04g0CgDb0hOEhxaho9zLw%3D&shp=a5d48078&shcp=81f88b70",
+      "avatarThumb": "https://p16-pu-sign-useast8.tiktokcdn-us.com/tos-useast5-avt-0068-tx/7069a58019756c93c854e486d349e737~c5_100x100.jpeg?lk3s=a5d48078&nonce=49408&refresh_token=a463f84b53e95dea25ae2ba3741b6e05&x-expires=1726182000&x-signature=Scv9lP2fBKwHBKArCszvvFyCpkU%3D&shp=a5d48078&shcp=81f88b70",
+      "signature": "Radicalizing you through fancams \n\nI post memes and joke edits on my alt @emma",
+      "createTime": 1706331514,
+      "verified": false,
+      "secUid": "MS4wLjABAAAAxY7x_E2su9hIuIcLgxZtpVuETrWhLfpom7pmNCbllO7LVEmZspXruhsi8Drb_MRe",
+      "ftc": false,
+      "relation": 0,
+      "openFavorite": false,
+      "bioLink": {
+        "link": "https://www.twitch.tv/hasanabi",
+        "risk": 0
+      },
+      "commentSetting": 0,
+      "commerceUserInfo": {
+        "commerceUser": false
+      },
+      "duetSetting": 0,
+      "stitchSetting": 0,
+      "privateAccount": false,
+      "secret": false,
+      "isADVirtual": false,
+      "roomId": "",
+      "uniqueIdModifyTime": 0,
+      "ttSeller": false,
+      "region": "US",
+      "downloadSetting": 0,
+      "profileTab": {
+        "showMusicTab": false,
+        "showQuestionTab": false,
+        "showPlayListTab": false
+      },
+      "followingVisibility": 2,
+      "recommendReason": "",
+      "nowInvitationCardUrl": "",
+      "nickNameModifyTime": 1709608072,
+      "isEmbedBanned": false,
+      "canExpPlaylist": true,
+      "profileEmbedPermission": 1,
+      "language": "en",
+      "eventList": [],
+      "suggestAccountBind": false,
+      "isOrganization": 0
+    }
+  },
+  "stats": {
+    "litupemma": {
+      "followerCount": 7670,
+      "followingCount": 109,
+      "heart": 1000000,
+      "heartCount": 1000000,
+      "videoCount": 70,
+      "diggCount": 0,
+      "friendCount": 95
+    }
+  }
+}
