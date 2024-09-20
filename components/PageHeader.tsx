@@ -1,4 +1,5 @@
 import React from 'react';
+import { Analytics } from '@vercel/analytics/react';
 
 interface PageHeaderProps {
   children: string;
@@ -18,6 +19,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ children }) => {
           {children}
         </h1>
       </div>
+      <Analytics />
     </div>
   );
 };
