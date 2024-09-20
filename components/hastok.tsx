@@ -7,8 +7,8 @@ import Footer from '../components/Footer';
 import TiktokVideos from "@/components/components/tiktok/videos";
 import { HasTokProps, TikTokVideoType } from '@/types/tiktok';
 
-const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
-  const { initialVideos, totalVideos, pageSize, initialSortBy, usernames } = socialMediaData.tiktok;
+const HasTok: React.FC<HasTokProps> = ({ tiktok }) => {
+  const { initialVideos, totalVideos, pageSize, initialSortBy, usernames } = tiktok;
 
   const [videos, setVideos] = useState<TikTokVideoType[]>(initialVideos || []);
   const [hasMore, setHasMore] = useState(false);

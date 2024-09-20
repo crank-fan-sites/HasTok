@@ -33,6 +33,6 @@ export interface SocialMediaData {
 }
 
 export interface HasTokProps {
-  socialMediaData: SocialMediaData;
+  tiktok: TikTokPapiData;
   username?: string;
 }

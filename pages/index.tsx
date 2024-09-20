@@ -1,36 +1,35 @@
 import type { NextPage, GetStaticProps } from "next";
-import HasTok from './hastok';
+import HasTok from '@/components/hastok';
 import { HasTokProps } from '../types/tiktok';
-import { getSocialMediaData } from '../lib/socialMediaApi';
+import { getTikTokData } from '../lib/tiktokPapi'; // Update this import
 
 const Home: NextPage<HasTokProps> = (props) => {
-  return <HasTok {...props} />;
+  return <HasTok tiktok={props.tiktok } />;
 };
 
 export const getStaticProps: GetStaticProps<HasTokProps> = async () => {
   try {
     // an array, pass as one or multiple usernames
     const usernames: string[] = []; // Explicitly type as string array
-    const socialMediaData = await getSocialMediaData(usernames);
+    const tiktokData = await getTikTokData(24, 'created', usernames);
 
     return {
       props: {
-        socialMediaData,
+        tiktok: tiktokData,
       },
       revalidate: 60 * 5, // 5 min
     };
   } catch (error) {
     console.error('Error in getStaticProps:', error);
+    // Return a default structure even if there's an error
     return {
       props: {
-        socialMediaData: {
-          tiktok: {
-            initialVideos: [],
-            totalVideos: 0,
-            pageSize: 24,
-            initialSortBy: 'created',
-            usernames: null,
-          },
+        tiktok: {
+          initialVideos: [],
+          totalVideos: 0,
+          pageSize: 24,
+          initialSortBy: 'created',
+          usernames: null,
         },
       },
       revalidate: 60 * 5
