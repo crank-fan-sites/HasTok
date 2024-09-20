@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createDirectus, rest, authentication, readItems, aggregate } from '@directus/sdk';
-import { TikTokVideo, TikTokPapiData } from '../types/tiktok';
+import { TikTokPapiData } from '../types/tiktok';
 
 const directus = createDirectus(process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055")
   .with(rest())

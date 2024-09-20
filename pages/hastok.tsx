@@ -1,4 +1,6 @@
-import type { NextPage } from "next";
+import Link from 'next/link';
+
+// import type { NextPage } from "next";
 import { useState, useCallback, useEffect } from 'react';
 import TiktokVideos from "@/components/components/tiktok/videos";
 import { HasTokProps, TikTokVideo } from '../types/tiktok';
@@ -198,7 +200,21 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <p className="text-center text-red-400">
-          <a href="/">Home</a> | <a href="/about">About</a> | <a href="https://twitter.com/hasansproducer">HasanAbi Community Twitter</a> | <a href="https://tiktok.com/hasansproducer">HasanAbi Community TikTok</a>
+          <Link href="/">
+            Home
+          </Link>
+          {' | '}
+          <Link href="/about">
+            About
+          </Link>
+          {' | '}
+          <a href="https://twitter.com/hasansproducer" target="_blank" rel="noopener noreferrer">
+            HasanAbi Community Twitter
+          </a>
+          {' | '}
+          <a href="https://tiktok.com/hasansproducer" target="_blank" rel="noopener noreferrer">
+            HasanAbi Community TikTok
+          </a>
         </p>
       </div>
     </div>

@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { NextApiRequest, NextApiResponse } from "next";
-import { createDirectus, rest, authentication, readItems, updateItem, createItem } from "@directus/sdk";
+import { createDirectus, rest, authentication, readItems, updateItem } from "@directus/sdk";
 import axios from "axios";
 
 const directus = createDirectus(process.env.DIRECTUS_URL)

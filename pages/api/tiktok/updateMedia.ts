@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createDirectus, rest, authentication, readItems, updateItem, createItem } from "@directus/sdk";
 import axios from "axios";

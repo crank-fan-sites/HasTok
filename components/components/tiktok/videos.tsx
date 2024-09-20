@@ -8,7 +8,7 @@ interface TiktokVideosProps {
 const TiktokVideos: NextPage<TiktokVideosProps> = ({ feed }) => {
   return (
     <div className="flex flex-wrap -m-2">
-      {feed.map((video, index) => (
+      {feed.map((video) => (
         <div key={video.id} className="w-full p-2 sm:w-1/2 md:w-1/3 lg:w-1/4">
           <TikTokVideo
             tiktok_id={video.tiktok_id}
