@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { FaHeart, FaComment, FaShare } from "react-icons/fa";
 import { BsFillPlayFill } from "react-icons/bs";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, parseISO } from "date-fns";
 import millify from "millify";
 import { TikTokVideoType } from '@/types/tiktok';
 
@@ -37,7 +37,7 @@ const TikTokVideo: NextPage<TikTokVideoType> = ({
           >
             <img src={cover} alt={`TikTok by ${author.nickname}`} className="w-full h-64 object-cover" />
             <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-sm px-1 rounded">
-              {formatDistanceToNow(new Date(created), { addSuffix: true })}
+              {formatDistanceToNow(parseISO(created), { addSuffix: true })}
             </div>
             <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-sm px-1 rounded">
               {formatDuration(duration)}

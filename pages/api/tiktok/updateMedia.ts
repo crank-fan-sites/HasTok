@@ -8,10 +8,20 @@ const directus = createDirectus(process.env.DIRECTUS_URL)
   .with(rest())
   .with(authentication());
 
-  export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
-  ) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  // Immediately send a response
+  res.status(202).json({ msg: "TikTok video update process started." });
+
+  // Call the core function without awaiting it
+  await core().catch(error => {
+    console.error("Error in core function:", error);
+  });
+}
+
+async function core() {
   let userCount = 0;
   let updateCount = 0;
 
@@ -39,23 +49,21 @@ const directus = createDirectus(process.env.DIRECTUS_URL)
     }
 
     console.log('Total users, updates processed:', userCount, updateCount);
-    res.status(200).json({ msg: "TikTok videos updated successfully" });
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while updating TikTok videos" });
+    console.error("An error occurred while updating TikTok videos:", error);
   }
 }
 
 async function checkIfShouldUpdate(user: any): Promise<boolean> {
   if (user.last_media_updated === null) return true;
 
-  const now = new Date().getTime();
-  const lastUpdated = new Date(user.last_media_updated).getTime();
+  const now = new Date()
+  const lastUpdated = new Date(user.last_media_updated)
   const mediaInterval = user.media_interval * 60 * 1000; // Convert minutes to miliseconds
 
-  return now - lastUpdated > mediaInterval;
+  const diff = now.getTime() - lastUpdated.getTime() > mediaInterval;
+  console.log(`checkIfShouldUpdate: ${diff}. ${now.getTime() - lastUpdated.getTime()} | now - lastUpdated: ${now.toISOString()} - ${lastUpdated.toISOString()} | mediaInterval: ${user.media_interval} min`);
+  return diff;
 }
 
 async function updateUserVideos(user: any) {
@@ -70,6 +78,7 @@ async function updateUserVideos(user: any) {
   } while (nextPageId);
 
   await updateLastUpdated(user.id);
+  console.log('updateMedia: saved TikTok user data + updated last_updated for user', user.id, user.unique_id);
 }
 
 async function fetchTikTokVideos(
@@ -112,11 +121,11 @@ async function saveTikTokVideos(
         limit: 1,
       })
     );
-
+        
     const video = {
       tiktok_id: item.id,
       author: authorId,
-      created: item.createTime * 1000,
+      created: new Date(item.createTime * 1000).toISOString(),
       desc: item.desc,
       collected: parseInt(item.statsV2?.collectCount || '0'),
       comments: parseInt(item.statsV2?.commentCount || '0'),
@@ -146,7 +155,7 @@ async function saveTikTokVideos(
 async function updateLastUpdated(userId: string) {
   await directus.request(
     updateItem('tiktok_users', userId, {
-      last_media_updated: new Date().getTime(),
+      last_media_updated: new Date().toISOString()
     })
   );
 }

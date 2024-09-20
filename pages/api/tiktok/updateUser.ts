@@ -12,6 +12,16 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  // Immediately send a response
+  res.status(202).json({ msg: "TikTok user update process started." });
+
+  // Call the core function without waiting for it to complete
+  await core().catch(error => {
+    console.error("Error in core function:", error);
+  });
+}
+
+async function core() {
   let userCount = 0;
   let updateCount = 0;
 
@@ -40,23 +50,23 @@ export default async function handler(
     }
 
     console.log('Total users, updates processed:', userCount, updateCount);
-    res.status(200).json({ msg: "TikTok users updated successfully" });
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while updating TikTok users" });
+    console.error("An error occurred while updating TikTok users:", error);
   }
 }
 
 async function checkIfShouldUpdate(user: any): Promise<boolean> {
   if (user.last_updated === null) return true;
 
-  const now = new Date().getTime();
-  const lastUpdated = new Date(user.last_updated).getTime();
+  const now = new Date();
+  const lastUpdated = new Date(user.last_updated);
   const interval = user.interval * 60 * 60 * 1000; // Convert hours to milliseconds
-  return now - lastUpdated > interval;
+  
+  const diff = now.getTime() - lastUpdated.getTime() > interval;
+  console.log(`checkIfShouldUpdate: ${diff} ${now.getTime() - lastUpdated.getTime()} | now: ${now.toISOString()} | lastUpdated: ${lastUpdated.toISOString()} | interval: ${user.interval * 24} hours` );
+  return diff;
 }
+
 
 async function updateUser(user: any) {
   console.log('updateUser: fetching TikTok user data for', user.id, user.unique_id);
@@ -64,7 +74,7 @@ async function updateUser(user: any) {
   await saveTikTokUser(data, user.id, user.unique_id);
 
   await updateLastUpdated(user.id);
-  console.log('updateUser: saved TIkTok user data + updated last_updated for user', user.id, user.unique_id);
+  console.log('updateUser: saved TikTok user data + updated last_updated for user', user.id, user.unique_id);
 }
 
 async function fetchTikTokUser(
@@ -94,7 +104,7 @@ async function saveTikTokUser(
     nickname: firstData.nickname,
     signature: firstData.signature,
     avatar: firstData.avatarMedium,
-    created: firstData.createTime,
+    created: new Date(firstData.createTime * 1000).toISOString(),
     verified: firstData.verified,
     sec_uid: firstData.secUid,
     bio_link: firstData.bioLink?.link || null,
@@ -112,9 +122,11 @@ async function saveTikTokUser(
 }
 
 async function updateLastUpdated(userId: string) {
+  const now = new Date().toISOString();
+  console.log(`Updating last_updated for user ${userId} to: ${now}`);
   await directus.request(
     updateItem('tiktok_users', userId, {
-      last_updated: new Date().getTime(),
+      last_updated: new Date().toISOString()
     })
   );
 }

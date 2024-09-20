@@ -6,7 +6,7 @@ export interface TikTokVideoType {
     nickname: string;
     avatar: string;
   };
-  created: string | number; // Assuming it's a timestamp or date string
+  created: string;
   desc: string;
   collected: number;
   comments: number;
