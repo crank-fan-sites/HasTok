@@ -10,6 +10,9 @@ const directus = createDirectus(process.env.DIRECTUS_URL)
     req: NextApiRequest,
     res: NextApiResponse
   ) {
+  let userCount = 0;
+  let updateCount = 0;
+
   await directus.login(process.env.DIRECTUS_ADMIN_EMAIL, process.env.DIRECTUS_ADMIN_PASSWORD);
 
   try {
@@ -20,12 +23,16 @@ const directus = createDirectus(process.env.DIRECTUS_URL)
     );
 
     for (const user of tiktokUsers) {
+      userCount++;
+      console.log('updateUser: checking if should update for', user.id, user.unique_id);
       const shouldUpdate = await checkIfShouldUpdate(user);
       if (shouldUpdate) {
         await updateUser(user);
+        updateCount++;
       }
     }
 
+    console.log('Total users, updates processed:', userCount, updateCount);
     res.status(200).json({ msg: "TikTok users updated successfully" });
   } catch (error) {
     console.error(error);
@@ -45,10 +52,12 @@ async function checkIfShouldUpdate(user: any): Promise<boolean> {
 }
 
 async function updateUser(user: any) {
+  console.log('updateUser: fetching TikTok user data for', user.id, user.unique_id);
   const data = await fetchTikTokUser(user.unique_id);
   await saveTikTokUser(data, user.id, user.unique_id);
 
   await updateLastUpdated(user.id);
+  console.log('updateUser: saved TIkTok user data + updated last_updated for user', user.id, user.unique_id);
 }
 
 async function fetchTikTokUser(
