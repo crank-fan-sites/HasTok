@@ -3,25 +3,9 @@ import { FaHeart, FaComment, FaShare } from "react-icons/fa";
 import { BsFillPlayFill } from "react-icons/bs";
 import { formatDistanceToNow } from "date-fns";
 import millify from "millify";
+import { TikTokVideoType } from '@/types/tiktok';
 
-interface TikTokVideoProps {
-  tiktok_id: string;
-  author: {
-    nickname: string;
-    unique_id: string;
-    avatar: string;
-  };
-  created: string;
-  desc: string;
-  collected: number;
-  comments: number;
-  plays: number;
-  shares: number;
-  cover: string;
-  duration: number;
-}
-
-const TikTokVideo: NextPage<TikTokVideoProps> = ({
+const TikTokVideo: NextPage<TikTokVideoType> = ({
   tiktok_id,
   author,
   created,

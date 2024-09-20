@@ -1,14 +1,16 @@
-import Link from 'next/link';
-
 // import type { NextPage } from "next";
 import { useState, useCallback, useEffect } from 'react';
+
+import PageHeader from '../components/PageHeader';
+import Footer from '../components/Footer';
+
 import TiktokVideos from "@/components/components/tiktok/videos";
-import { HasTokProps, TikTokVideo } from '../types/tiktok';
+import { HasTokProps, TikTokVideoType } from '@/types/tiktok';
 
 const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
   const { initialVideos, totalVideos, pageSize, initialSortBy, usernames } = socialMediaData.tiktok;
 
-  const [videos, setVideos] = useState<TikTokVideo[]>(initialVideos || []);
+  const [videos, setVideos] = useState<TikTokVideoType[]>(initialVideos || []);
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -81,21 +83,8 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
 
   return (
     <div className="bg-scanlines bg-custom-purple"> {/* Base background */}
-      <div className="relative w-full">
-        <div className="w-full aspect-[680/130] relative"> {/* Added relative positioning */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center z-10" 
-            style={{ backgroundImage: "url('/images/top-thin-rect.jpg')" }}
-          ></div>
-        </div>
-        <div className="absolute inset-x-0 bottom-0 bg-black bg-opacity-70 z-30"> {/* Higher opacity, highest z-index */}
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-blue-500 tracking-wide py-2">
-              HasTok
-            </h1>
-          </div>
-        </div>
-      </div>
+      <PageHeader>HasTok</PageHeader>
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-4 text-center text-white">
           <button
@@ -165,7 +154,7 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
           </button>
         </div>
         <div className="mb-4 text-center text-white">
-          Showing <b className="text-lg text-green-500">{videos.length}</b> of <b className="text-lg text-green-500">{totalVideos}</b> videos
+          Showing <b className="text-lg text-red-500">{videos.length}</b> of <b className="text-lg text-red-500">{totalVideos}</b> videos
         </div>
         {isSwitchingSort ? (
           <div className="text-center text-white">
@@ -180,7 +169,7 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
         {hasMore && (
           <div className="mt-8 flex justify-center">
             <button
-              className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+              className="px-4 py-2 bg-purple-500 text-white rounded disabled:opacity-50"
               onClick={loadMoreVideos}
               disabled={isLoading}
             >
@@ -189,7 +178,7 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
           </div>
         )}
         <div className="mt-3 mb-4 text-center text-white">
-          Showing <b className="text-lg text-green-500">{videos.length}</b> of <b className="text-lg text-green-500">{totalVideos}</b> videos
+          Showing <b className="text-lg text-red-500">{videos.length}</b> of <b className="text-lg text-red-500">{totalVideos}</b> videos
         </div>
         {!hasMore && videos.length < totalVideos && (
           <p className="mt-8 text-center text-white">
@@ -198,25 +187,7 @@ const HasTok: React.FC<HasTokProps> = ({ socialMediaData }) => {
         )}
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <p className="text-center text-red-400">
-          <Link href="/">
-            Home
-          </Link>
-          {' | '}
-          <Link href="/about">
-            About
-          </Link>
-          {' | '}
-          <a href="https://twitter.com/hasansproducer" target="_blank" rel="noopener noreferrer">
-            HasanAbi Community Twitter
-          </a>
-          {' | '}
-          <a href="https://tiktok.com/hasansproducer" target="_blank" rel="noopener noreferrer">
-            HasanAbi Community TikTok
-          </a>
-        </p>
-      </div>
+      <Footer />
     </div>
   );
 };

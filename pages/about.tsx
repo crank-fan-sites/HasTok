@@ -1,21 +1,12 @@
 import React from 'react';
+import PageHeader from '../components/PageHeader';
+import Footer from '../components/Footer';
 
 const About: React.FC = () => {
   return (
     <div className="bg-scanlines bg-custom-purple"> {/* Base background */}
-      <div className="relative w-full">
-        <div className="w-full aspect-[680/130] relative"> {/* Added relative positioning */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center z-10" 
-            style={{ backgroundImage: "url('/images/top-thin-rect.jpg')" }}
-          ></div>
-        </div>
-        <div className="absolute inset-x-0 bottom-0 bg-black bg-opacity-70 z-30"> {/* Higher opacity, highest z-index */}
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-blue-500 tracking-wide py-2">
-            About HasTok
-          </h1>
-        </div>
-      </div>
+      <PageHeader>About HasTok</PageHeader>
+      
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <p className="text-white">
           I&apos;m &quot;chase_saddy&quot; around <a href="https://twitter.com/chase_saddy" className="text-blue-500">Twitter</a>, <a href="https://twitch.tv/chase_saddy" className="text-blue-500">Twitch</a>. 
@@ -30,11 +21,7 @@ const About: React.FC = () => {
         </p>
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <p className="text-center text-red-400">
-          <a href="/">Home</a> | <a href="/about">About</a> | <a href="https://twitter.com/hasansproducer">HasanAbi Community Twitter</a> | <a href="https://tiktok.com/hasansproducer">HasanAbi Community TikTok</a>
-        </p>
-      </div>
+    <Footer />
     </div>
   );
 };

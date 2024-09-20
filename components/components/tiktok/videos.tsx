@@ -1,8 +1,9 @@
 import type { NextPage } from "next";
 import TikTokVideo from "./video";
+import { TikTokVideoType } from '@/types/tiktok';
 
 interface TiktokVideosProps {
-  feed: TikTokVideo[];
+  feed: TikTokVideoType[];
 }
 
 const TiktokVideos: NextPage<TiktokVideosProps> = ({ feed }) => {

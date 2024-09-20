@@ -1,10 +1,23 @@
-export interface TikTokVideo {
-  id: string;
-  // Add other TikTok-specific fields as needed
+export interface TikTokVideoType {
+  id?: string;
+  tiktok_id: string;
+  author: {
+    unique_id: string;
+    nickname: string;
+    avatar: string;
+  };
+  created: string | number; // Assuming it's a timestamp or date string
+  desc: string;
+  collected: number;
+  comments: number;
+  plays: number;
+  shares: number;
+  cover: string;
+  duration: number;
 }
 
 export interface TikTokPapiData {
-  initialVideos: TikTokVideo[];
+  initialVideos: TikTokVideoType[];
   totalVideos: number;
   pageSize: number;
   initialSortBy: 'created' | 'plays';
