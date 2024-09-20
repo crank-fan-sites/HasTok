@@ -1,13 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createDirectus, rest, authentication, readItems, aggregate } from '@directus/sdk';
-import { TikTokPapiData } from '../types/tiktok';
+import { TikTokPapiData, TikTokVideoType } from '../types/tiktok';
 
-const directus = createDirectus(process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055")
+if (!process.env.DIRECTUS_URL) throw new Error('DIRECTUS_URL is not defined');
+const directus = createDirectus(process.env.DIRECTUS_URL)
   .with(rest())
   .with(authentication());
 
 export async function getTikTokData(pageSize: number, sortBy: 'created' | 'plays', usernames: string[] | null): Promise<TikTokPapiData> {
-  await directus.login(process.env.DIRECTUS_ADMIN_EMAIL, process.env.DIRECTUS_ADMIN_PASSWORD);
+  const email = process.env.DIRECTUS_ADMIN_EMAIL;
+  const password = process.env.DIRECTUS_ADMIN_PASSWORD;
+  if (!email || !password) {
+    throw new Error('Directus admin credentials are not set in environment variables');
+  }
+  await directus.login(email, password);
 
   console.log('Fetching TikTok data...', usernames ? `for users: ${usernames.join(', ')}` : 'for all users');
 
@@ -21,6 +27,7 @@ export async function getTikTokData(pageSize: number, sortBy: 'created' | 'plays
   }
 
   try {
+    type AggregateResult = { count: { id: number } }[];
     const [initialVideos, totalCountResult] = await Promise.all([
       directus.request(
         readItems('tiktok_videos', {
@@ -29,8 +36,8 @@ export async function getTikTokData(pageSize: number, sortBy: 'created' | 'plays
           sort: [`-${sortBy}`],
           filter: filter,
         })
-      ),
-      directus.request(
+      ) as Promise<TikTokVideoType[]>,
+      directus.request<AggregateResult>(
         aggregate('tiktok_videos', {
           aggregate: { count: 'id' },
           filter: filter,
@@ -38,9 +45,7 @@ export async function getTikTokData(pageSize: number, sortBy: 'created' | 'plays
       )
     ]);
     
-    const totalVideos = totalCountResult && Array.isArray(totalCountResult) && totalCountResult.length > 0
-      ? totalCountResult[0].count.id
-      : 0;
+    const totalVideos = totalCountResult[0]?.count?.id ?? 0;
 
     console.log(`Fetched ${initialVideos.length} initial TikTok videos. Total videos: ${totalVideos}`);
 

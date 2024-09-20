@@ -21,7 +21,7 @@ export interface TikTokPapiData {
   totalVideos: number;
   pageSize: number;
   initialSortBy: 'created' | 'plays';
-  username?: string;  // Add this line
+  usernames?: string[] | null;
 }
 
 export interface SocialMediaData {

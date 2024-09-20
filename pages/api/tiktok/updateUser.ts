@@ -3,18 +3,24 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { createDirectus, rest, authentication, readItems, updateItem } from "@directus/sdk";
 import axios from "axios";
 
+if (!process.env.DIRECTUS_URL) throw new Error('DIRECTUS_URL is not defined');
 const directus = createDirectus(process.env.DIRECTUS_URL)
   .with(rest())
   .with(authentication());
 
-  export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
-  ) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   let userCount = 0;
   let updateCount = 0;
 
-  await directus.login(process.env.DIRECTUS_ADMIN_EMAIL, process.env.DIRECTUS_ADMIN_PASSWORD);
+  const email = process.env.DIRECTUS_ADMIN_EMAIL;
+  const password = process.env.DIRECTUS_ADMIN_PASSWORD;
+  if (!email || !password) {
+    throw new Error('Directus admin credentials are not set in environment variables');
+  }
+  await directus.login(email, password);
 
   try {
     const tiktokUsers = await directus.request(

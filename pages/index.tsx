@@ -9,7 +9,8 @@ const Home: NextPage<HasTokProps> = (props) => {
 
 export const getStaticProps: GetStaticProps<HasTokProps> = async () => {
   try {
-    const usernames = []; // an array, pass as one or multiple usernames
+    // an array, pass as one or multiple usernames
+    const usernames: string[] = []; // Explicitly type as string array
     const socialMediaData = await getSocialMediaData(usernames);
 
     return {
