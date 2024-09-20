@@ -1,7 +1,7 @@
 import type { NextPage, GetStaticProps } from "next";
 import HasTok from '@/components/hastok';
-import { HasTokProps } from '../types/tiktok';
-import { getTikTokData } from '../lib/tiktokPapi'; // Update this import
+import { HasTokProps } from '@/types/tiktok';
+import { getTikTokData } from '@/lib/tiktokPapi'; // Update this import
 
 const Home: NextPage<HasTokProps> = (props) => {
   return <HasTok tiktok={props.tiktok } />;
