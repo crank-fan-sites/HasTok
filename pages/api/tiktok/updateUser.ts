@@ -12,6 +12,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  console.log('TikTok user update process started log');
   // Immediately send a response
   res.status(202).json({ msg: "TikTok user update process started." });
 
@@ -19,6 +20,7 @@ export default async function handler(
   await core().catch(error => {
     console.error("Error in core function:", error);
   });
+  console.log('TikTok media update process ended log');
 }
 
 async function core() {

@@ -12,12 +12,19 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // Immediately send a response
-  res.status(202).json({ msg: "TikTok video update process started." });
+  console.log('TikTok media update process started log');
 
-  // Call the core function without awaiting it
-  await core().catch(error => {
-    console.error("Error in core function:", error);
+  // Use res.send() instead of res.json() to ensure the response is sent immediately
+  res.status(202).send("TikTok media update process started.");
+
+  // Use setImmediate to defer the execution of core() to the next event loop iteration
+  setImmediate(async () => {
+    console.log('TikTok media update setImmediate begun');
+    await core().catch(error => {
+      console.error("Error in core function:", error);
+    });
+
+    console.log('TikTok media update process ended log');
   });
 }
 
@@ -39,6 +46,7 @@ async function core() {
       })
     );
 
+    console.log('got the tiktok_users');    
     for (const user of tiktokUsers) {
       userCount++;
       const shouldUpdate = await checkIfShouldUpdate(user);
@@ -77,8 +85,8 @@ async function updateUserVideos(user: any) {
     nextPageId = isFirstUpdate ? tiktokVideoData.next_page_id : null;
   } while (nextPageId);
 
-  await updateLastUpdated(user.id);
   console.log('updateMedia: saved TikTok user data + updated last_updated for user', user.id, user.unique_id);
+  await updateLastUpdated(user.id);
 }
 
 async function fetchTikTokVideos(
