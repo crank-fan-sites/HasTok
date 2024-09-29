@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from 'react';
 import PageHeader from '../components/PageHeader';
 import Footer from '../components/Footer';
 
-import TiktokVideos from "@/components/components/tiktok/videos";
+import TiktokVideos from "@/components/tiktok/videos";
 import { HasTokProps, TikTokVideoType } from '@/types/tiktok';
 
 const HasTok: React.FC<HasTokProps> = ({ tiktok }) => {

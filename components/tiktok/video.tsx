@@ -3,7 +3,7 @@ import { FaHeart, FaComment, FaShare } from "react-icons/fa";
 import { BsFillPlayFill } from "react-icons/bs";
 import { formatDistanceToNow } from "date-fns";
 import millify from "millify";
-import { TikTokVideoType } from '@/types/tiktok';
+import { TikTokVideoType } from "../../types/tiktok";
 
 const TikTokVideo: NextPage<TikTokVideoType> = ({
   tiktok_id,
