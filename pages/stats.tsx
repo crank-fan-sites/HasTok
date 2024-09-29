@@ -11,18 +11,21 @@ interface TikTokStatsPageProps {
     totalFollowers: number;
     totalVideos: number;
     totalFriends: number;
-    heartsGainLast24Hours: number;
-    followersGainLast24Hours: number;
-    videosGainLast24Hours: number;
-    friendsGainLast24Hours: number;
-    heartsGainLast7Days: number;
-    followersGainLast7Days: number;
-    videosGainLast7Days: number;
-    friendsGainLast7Days: number;
-    heartsGainLast30Days: number;
-    followersGainLast30Days: number;
-    videosGainLast30Days: number;
-    friendsGainLast30Days: number;
+    heartsGainLast24Hours: number | null;
+    followersGainLast24Hours: number | null;
+    videosGainLast24Hours: number | null;
+    friendsGainLast24Hours: number | null;
+    daysCalculatedFor24Hours: number;
+    heartsGainLast7Days: number | null;
+    followersGainLast7Days: number | null;
+    videosGainLast7Days: number | null;
+    friendsGainLast7Days: number | null;
+    daysCalculatedFor7Days: number;
+    heartsGainLast30Days: number | null;
+    followersGainLast30Days: number | null;
+    videosGainLast30Days: number | null;
+    friendsGainLast30Days: number | null;
+    daysCalculatedFor30Days: number;
     dailyStats: { 
       date: string; 
       hearts: number; 
@@ -35,6 +38,14 @@ interface TikTokStatsPageProps {
 }
 
 const TikTokStatsPage: React.FC<TikTokStatsPageProps> = ({ tiktokStats }) => {
+  const formatGain = (gain: number | null, days: number, actualDays: number) => {
+    if (gain === null) return 'Insufficient data';
+    const formattedGain = gain.toLocaleString();
+    return actualDays === days 
+      ? `${formattedGain}`
+      : `${formattedGain} (in ${actualDays} day${actualDays !== 1 ? 's' : ''})`;
+  };
+
   return (
     <div className="bg-scanlines bg-custom-purple">
       <PageHeader>HasTok TikTok Stats</PageHeader>
@@ -43,11 +54,11 @@ const TikTokStatsPage: React.FC<TikTokStatsPageProps> = ({ tiktokStats }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {['Hearts', 'Followers', 'Videos', 'Friends'].map(stat => (
             <div key={stat} className="bg-gray-800 text-white p-4 rounded-lg shadow-md">
-              <h2 className="text-xl font-bold mb-2">{stat}</h2>
-              <p className="text-2xl font-bold">{(tiktokStats[`total${stat}`] ?? 0).toLocaleString()}</p>
-              <p className="text-sm">Last 24h: {(tiktokStats[`${stat.toLowerCase()}GainLast24Hours`] ?? 0).toLocaleString()}</p>
-              <p className="text-sm">Last 7d: {(tiktokStats[`${stat.toLowerCase()}GainLast7Days`] ?? 0).toLocaleString()}</p>
-              <p className="text-sm">Last 30d: {(tiktokStats[`${stat.toLowerCase()}GainLast30Days`] ?? 0).toLocaleString()}</p>
+              <h2 className="text-xl text-blue-500 font-bold mb-2">{stat}</h2>
+              <p className="text-2xl font-bold">{((tiktokStats as any)[`total${stat}`] ?? 0).toLocaleString()}</p>
+              <p className="text-sm">Last 24h: {formatGain((tiktokStats as any)[`${stat.toLowerCase()}GainLast24Hours`], 1, tiktokStats.daysCalculatedFor24Hours)}</p>
+              <p className="text-sm">Last 7d: {formatGain((tiktokStats as any)[`${stat.toLowerCase()}GainLast7Days`], 7, tiktokStats.daysCalculatedFor7Days)}</p>
+              <p className="text-sm">Last 30d: {formatGain((tiktokStats as any)[`${stat.toLowerCase()}GainLast30Days`], 30, tiktokStats.daysCalculatedFor30Days)}</p>
             </div>
           ))}
         </div>

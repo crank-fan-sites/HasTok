@@ -100,27 +100,51 @@ export async function getTikTokStats() {
     dailyStats.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     const latestStats = dailyStats[dailyStats.length - 1] || { hearts: 0, followers: 0, videos: 0, friends: 0 };
-    const previousDayStats = dailyStats[dailyStats.length - 2] || { hearts: 0, followers: 0, videos: 0, friends: 0 };
-    const sevenDaysAgoStats = dailyStats[Math.max(0, dailyStats.length - 8)] || { hearts: 0, followers: 0, videos: 0, friends: 0 };
-    const thirtyDaysAgoStats = dailyStats[0] || { hearts: 0, followers: 0, videos: 0, friends: 0 };
+    
+    const calculateGain = (days: number) => {
+      if (dailyStats.length < days + 1) {
+        return {
+          hearts: null,
+          followers: null,
+          videos: null,
+          friends: null,
+          daysCalculated: dailyStats.length - 1
+        };
+      }
+      const oldStats = dailyStats[dailyStats.length - 1 - days];
+      return {
+        hearts: latestStats.hearts - oldStats.hearts,
+        followers: latestStats.followers - oldStats.followers,
+        videos: latestStats.videos - oldStats.videos,
+        friends: latestStats.friends - oldStats.friends,
+        daysCalculated: days
+      };
+    };
+
+    const last24HoursGain = calculateGain(1);
+    const last7DaysGain = calculateGain(7);
+    const last30DaysGain = calculateGain(30);
 
     return {
       totalHearts: latestStats.hearts,
       totalFollowers: latestStats.followers,
       totalVideos: latestStats.videos,
       totalFriends: latestStats.friends,
-      heartsGainLast24Hours: latestStats.hearts - previousDayStats.hearts,
-      followersGainLast24Hours: latestStats.followers - previousDayStats.followers,
-      videosGainLast24Hours: latestStats.videos - previousDayStats.videos,
-      friendsGainLast24Hours: latestStats.friends - previousDayStats.friends,
-      heartsGainLast7Days: latestStats.hearts - sevenDaysAgoStats.hearts,
-      followersGainLast7Days: latestStats.followers - sevenDaysAgoStats.followers,
-      videosGainLast7Days: latestStats.videos - sevenDaysAgoStats.videos,
-      friendsGainLast7Days: latestStats.friends - sevenDaysAgoStats.friends,
-      heartsGainLast30Days: latestStats.hearts - thirtyDaysAgoStats.hearts,
-      followersGainLast30Days: latestStats.followers - thirtyDaysAgoStats.followers,
-      videosGainLast30Days: latestStats.videos - thirtyDaysAgoStats.videos,
-      friendsGainLast30Days: latestStats.friends - thirtyDaysAgoStats.friends,
+      heartsGainLast24Hours: last24HoursGain.hearts,
+      followersGainLast24Hours: last24HoursGain.followers,
+      videosGainLast24Hours: last24HoursGain.videos,
+      friendsGainLast24Hours: last24HoursGain.friends,
+      daysCalculatedFor24Hours: last24HoursGain.daysCalculated,
+      heartsGainLast7Days: last7DaysGain.hearts,
+      followersGainLast7Days: last7DaysGain.followers,
+      videosGainLast7Days: last7DaysGain.videos,
+      friendsGainLast7Days: last7DaysGain.friends,
+      daysCalculatedFor7Days: last7DaysGain.daysCalculated,
+      heartsGainLast30Days: last30DaysGain.hearts,
+      followersGainLast30Days: last30DaysGain.followers,
+      videosGainLast30Days: last30DaysGain.videos,
+      friendsGainLast30Days: last30DaysGain.friends,
+      daysCalculatedFor30Days: last30DaysGain.daysCalculated,
       dailyStats,
     };
   } catch (error) {

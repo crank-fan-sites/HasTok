@@ -62,11 +62,56 @@ const DailyTikTokStats: React.FC<DailyTikTokStatsProps> = ({ dailyStats }) => {
     stacked: false,
     plugins: {
       title: {
-        display: true,
-        text: 'Daily TikTok Stats',
+        display: false, // We'll create our own title
       },
+      legend: {
+        labels: {
+          font: {
+            size: 14
+          }
+        },
+        position: 'top' as const,
+      },
+      tooltip: {
+        bodyFont: {
+          size: 14
+        },
+        titleFont: {
+          size: 16
+        }
+      },
+      customLegendSpacing: {
+        beforeInit(chart: any) {
+          // Create a new plugin to handle legend spacing
+          const originalFit = chart.legend.fit;
+          chart.legend.fit = function fit() {
+            originalFit.bind(chart.legend)();
+            this.height += 20; // Adjust this value to increase/decrease space
+          }
+        }
+      }
     },
     scales: {
+      x: {
+        ticks: {
+          font: {
+            size: 12
+          },
+          color: 'white',
+        },
+        title: {
+          display: true,
+          text: 'Date',
+          font: {
+            size: 16
+          },
+          color: 'rgb(59, 130, 246)', // bg-blue-500
+          padding: {top: 10, bottom: 10},
+        },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)',
+        },
+      },
       y: {
         type: 'linear' as const,
         display: true,
@@ -74,6 +119,20 @@ const DailyTikTokStats: React.FC<DailyTikTokStatsProps> = ({ dailyStats }) => {
         title: {
           display: true,
           text: 'Count',
+          font: {
+            size: 16
+          },
+          color: 'rgb(59, 130, 246)', // bg-blue-500
+          padding: {top: 10, bottom: 10},
+        },
+        ticks: {
+          font: {
+            size: 12
+          },
+          color: 'white',
+        },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)',
         },
       },
       y1: {
@@ -83,9 +142,21 @@ const DailyTikTokStats: React.FC<DailyTikTokStatsProps> = ({ dailyStats }) => {
         title: {
           display: true,
           text: 'Account Count',
+          font: {
+            size: 16
+          },
+          color: 'rgb(59, 130, 246)', // bg-blue-500
+          padding: {top: 10, bottom: 10},
+        },
+        ticks: {
+          font: {
+            size: 12
+          },
+          color: 'white',
         },
         grid: {
           drawOnChartArea: false,
+          color: 'rgba(255, 255, 255, 0.1)',
         },
       },
     },
@@ -101,8 +172,11 @@ const DailyTikTokStats: React.FC<DailyTikTokStatsProps> = ({ dailyStats }) => {
   return (
     <div className="mt-8 space-y-8">
       {charts.map((chart, index) => (
-        <div key={index} className="bg-gray-800 p-4 rounded-lg shadow-md">
-          <Line options={{...options, plugins: {...options.plugins, title: {...options.plugins.title, text: `Daily ${chart.label} Stats`}}}} data={createChartData(chart.label, chart.data, chart.color)} />
+        <div key={index} className="bg-gray-800 rounded-lg shadow-md overflow-hidden">
+          <h3 className="text-2xl font-bold bg-green-500 text-white p-4 mb-4 text-center">Daily {chart.label} Stats</h3>
+          <div className="p-4">
+            <Line options={options} data={createChartData(chart.label, chart.data, chart.color)} />
+          </div>
         </div>
       ))}
     </div>
