@@ -19,6 +19,7 @@ const TiktokVideos: NextPage<TiktokVideosProps> = ({ feed }) => {
             collected={video.collected}
             comments={video.comments}
             plays={video.plays}
+            hearts={video.hearts}
             shares={video.shares}
             cover={video.cover}
             duration={video.duration}

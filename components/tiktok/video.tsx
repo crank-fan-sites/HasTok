@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
+import Image from "next/image";
 import { FaHeart, FaComment, FaShare } from "react-icons/fa";
-import { BsFillPlayFill } from "react-icons/bs";
+import { BsFillPlayFill, BsBookmark } from "react-icons/bs";
 import { formatDistanceToNow } from "date-fns";
 import millify from "millify";
 import { TikTokVideoType } from "../../types/tiktok";
@@ -10,6 +11,7 @@ const TikTokVideo: NextPage<TikTokVideoType> = ({
   author,
   created,
   desc,
+  hearts,
   collected,
   comments,
   plays,
@@ -35,7 +37,15 @@ const TikTokVideo: NextPage<TikTokVideoType> = ({
             target="_blank"
             rel="noopener noreferrer"
           >
-            <img src={cover} alt={`TikTok by ${author.nickname}`} className="w-full h-64 object-cover" />
+            <div className="relative w-full h-64">
+              <Image 
+                src={cover} 
+                alt={`TikTok by ${author.nickname}`} 
+                layout="fill"
+                objectFit="cover"
+                unoptimized={true}
+              />
+            </div>
             <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-sm px-1 rounded">
               {formatDistanceToNow(new Date(created), { addSuffix: true })}
             </div>
@@ -52,28 +62,41 @@ const TikTokVideo: NextPage<TikTokVideoType> = ({
               rel="noopener noreferrer"
               className="flex items-center"
             >
-              <img src={author.avatar} alt={author.unique_id} className="w-10 h-10 rounded-full mr-2" />
+              <div className="relative w-10 h-10 mr-2">
+                <Image 
+                  src={author.avatar}
+                  alt={author.unique_id} 
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-full"
+                  unoptimized={true}
+                />
+              </div>
               <h2 className="font-bold text-lg text-white truncate max-w-[200px]">{author.nickname}</h2>
             </a>
           </div>
           <p className="text-sm mb-4 overflow-hidden max-h-[8.4em] line-clamp-6 text-gray-300 italic">{desc}</p>
           <div className="mt-auto">
-            <div className="grid grid-cols-2 ml-5 gap-x-4 gap-y-2 font-semibold">
+            <div className="grid grid-cols-3 gap-x-2 gap-y-2 font-semibold text-sm">
               <div className="flex items-center">
-                <BsFillPlayFill className="mr-1 text-green-500 text-sm" />
-                <span className="">{millify(plays)}</span>
+                <BsFillPlayFill className="mr-1 text-green-500" />
+                <span>{millify(plays)}</span>
               </div>
               <div className="flex items-center">
-                <FaHeart className="mr-1 text-green-500 text-xs" />
-                <span className="text-md">{millify(collected)}</span>
+                <FaHeart className="mr-1 text-red-500" />
+                <span>{millify(hearts)}</span>
               </div>
               <div className="flex items-center">
-                <FaComment className="mr-1 text-green-500 text-xs" />
-                <span className="text-md">{millify(comments)}</span>
+                <BsBookmark className="mr-1 text-blue-500" />
+                <span>{millify(collected)}</span>
               </div>
               <div className="flex items-center">
-                <FaShare className="mr-1 text-green-500 text-xs" />
-                <span className="text-md">{millify(shares)}</span>
+                <FaComment className="mr-1 text-yellow-500" />
+                <span>{millify(comments)}</span>
+              </div>
+              <div className="flex items-center">
+                <FaShare className="mr-1 text-purple-500" />
+                <span>{millify(shares)}</span>
               </div>
             </div>
           </div>

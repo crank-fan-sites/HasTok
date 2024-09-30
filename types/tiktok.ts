@@ -8,6 +8,7 @@ export interface TikTokVideoType {
   };
   created: string | number; // Assuming it's a timestamp or date string
   desc: string;
+  hearts: number;
   collected: number;
   comments: number;
   plays: number;
