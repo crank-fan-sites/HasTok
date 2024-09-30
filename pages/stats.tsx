@@ -55,10 +55,10 @@ const TikTokStatsPage: React.FC<TikTokStatsPageProps> = ({ tiktokStats }) => {
           {['Hearts', 'Followers', 'Videos', 'Friends'].map(stat => (
             <div key={stat} className="bg-gray-800 text-white p-4 rounded-lg shadow-md">
               <h2 className="text-xl text-blue-500 font-bold mb-2">{stat}</h2>
-              <p className="text-2xl font-bold">{((tiktokStats as any)[`total${stat}`] ?? 0).toLocaleString()}</p>
-              <p className="text-sm">Last 24h: {formatGain((tiktokStats as any)[`${stat.toLowerCase()}GainLast24Hours`], 1, tiktokStats.daysCalculatedFor24Hours)}</p>
-              <p className="text-sm">Last 7d: {formatGain((tiktokStats as any)[`${stat.toLowerCase()}GainLast7Days`], 7, tiktokStats.daysCalculatedFor7Days)}</p>
-              <p className="text-sm">Last 30d: {formatGain((tiktokStats as any)[`${stat.toLowerCase()}GainLast30Days`], 30, tiktokStats.daysCalculatedFor30Days)}</p>
+              <p className="text-2xl font-bold">{(tiktokStats[`total${stat}` as keyof typeof tiktokStats] ?? 0).toLocaleString()}</p>
+              <p className="text-sm">Last 24h: {formatGain(tiktokStats[`${stat.toLowerCase()}GainLast24Hours` as keyof typeof tiktokStats] as number | null, 1, tiktokStats.daysCalculatedFor24Hours)}</p>
+              <p className="text-sm">Last 7d: {formatGain(tiktokStats[`${stat.toLowerCase()}GainLast7Days` as keyof typeof tiktokStats] as number | null, 7, tiktokStats.daysCalculatedFor7Days)}</p>
+              <p className="text-sm">Last 30d: {formatGain(tiktokStats[`${stat.toLowerCase()}GainLast30Days` as keyof typeof tiktokStats] as number | null, 30, tiktokStats.daysCalculatedFor30Days)}</p>
             </div>
           ))}
         </div>
@@ -92,18 +92,21 @@ export const getStaticProps: GetStaticProps<TikTokStatsPageProps> = async () => 
           totalFollowers: 0,
           totalVideos: 0,
           totalFriends: 0,
-          heartGainLast24Hours: 0,
-          followerGainLast24Hours: 0,
-          videoGainLast24Hours: 0,
-          friendGainLast24Hours: 0,
-          heartGainLast7Days: 0,
-          followerGainLast7Days: 0,
-          videoGainLast7Days: 0,
-          friendGainLast7Days: 0,
-          heartGainLast30Days: 0,
-          followerGainLast30Days: 0,
-          videoGainLast30Days: 0,
-          friendGainLast30Days: 0,
+          heartsGainLast24Hours: null,
+          followersGainLast24Hours: null,
+          videosGainLast24Hours: null,
+          friendsGainLast24Hours: null,
+          daysCalculatedFor24Hours: 0,
+          heartsGainLast7Days: null,
+          followersGainLast7Days: null,
+          videosGainLast7Days: null,
+          friendsGainLast7Days: null,
+          daysCalculatedFor7Days: 0,
+          heartsGainLast30Days: null,
+          followersGainLast30Days: null,
+          videosGainLast30Days: null,
+          friendsGainLast30Days: null,
+          daysCalculatedFor30Days: 0,
           dailyStats: [],
         },
       },
