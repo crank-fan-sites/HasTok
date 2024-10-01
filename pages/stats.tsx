@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import DailyTikTokStats from '@/components/DailyTikTokStats';
 import { getTikTokStats } from '@/lib/tiktokStats';
 import Head from 'next/head';
+import TopLinks from "@/components/topLinks";
 
 interface TikTokStatsPageProps {
   tiktokStats: {
@@ -55,6 +56,7 @@ const TikTokStatsPage: React.FC<TikTokStatsPageProps> = ({ tiktokStats }) => {
       </Head>
       <div className="bg-scanlines bg-custom-purple">
       <PageHeader>HasTok Community Stats</PageHeader>
+      <TopLinks />
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

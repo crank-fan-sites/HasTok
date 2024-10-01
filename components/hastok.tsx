@@ -8,7 +8,7 @@ import Footer from '../components/Footer';
 import TiktokVideos from "@/components/tiktok/videos";
 import { HasTokProps, TikTokVideoType } from '@/types/tiktok';
 
-import Link from 'next/link';
+import TopLinks from "@/components/topLinks";
 
 const HasTok: React.FC<HasTokProps> = ({ tiktok }) => {
   const { initialVideos, totalVideos, pageSize, initialSortBy, usernames } = tiktok;
@@ -92,13 +92,7 @@ const HasTok: React.FC<HasTokProps> = ({ tiktok }) => {
       </Head>
       <div className="bg-scanlines bg-custom-purple"> {/* Base background */}
         <PageHeader>HasTok</PageHeader>
-
-        <div className="text-center container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <Link href="/stats" className="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            View HasTok Community Stats
-          </Link>
-        </div>
-
+        <TopLinks />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-4 text-center text-white">
             <button

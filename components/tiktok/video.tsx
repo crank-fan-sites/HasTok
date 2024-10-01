@@ -6,6 +6,8 @@ import { formatDistanceToNow } from "date-fns";
 import millify from "millify";
 import { TikTokVideoType } from "../../types/tiktok";
 
+const fallbackImageUrl = "/red-eyes.jpg";
+
 const TikTokVideo: NextPage<TikTokVideoType> = ({
   tiktok_id,
   author,
@@ -39,11 +41,15 @@ const TikTokVideo: NextPage<TikTokVideoType> = ({
           >
             <div className="relative w-full h-64">
               <Image 
-                src={cover} 
+                src={cover || fallbackImageUrl}
                 alt={`TikTok by ${author.nickname}`} 
-                layout="fill"
-                objectFit="cover"
+                fill
+                style={{ objectFit: "cover" }}
                 unoptimized={true}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = fallbackImageUrl;
+                }}
               />
             </div>
             <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-sm px-1 rounded">
@@ -64,12 +70,16 @@ const TikTokVideo: NextPage<TikTokVideoType> = ({
             >
               <div className="relative w-10 h-10 mr-2">
                 <Image 
-                  src={author.avatar}
+                  src={author.avatar || fallbackImageUrl}
                   alt={author.unique_id} 
-                  layout="fill"
-                  objectFit="cover"
+                  fill
+                  style={{ objectFit: "cover" }}
                   className="rounded-full"
                   unoptimized={true}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = fallbackImageUrl;
+                  }}
                 />
               </div>
               <h2 className="font-bold text-lg text-white truncate max-w-[200px]">{author.nickname}</h2>
