@@ -31,7 +31,6 @@ export async function getTikTokStats() {
       })
     );
 
-    // Process the stats
     const processedStats = stats.reduce((acc, stat) => {
       const date = new Date(stat.timestamp).toISOString().split('T')[0];
       const hearts = parseInt(stat.hearts, 10) || 0;
