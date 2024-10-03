@@ -37,3 +37,14 @@ export interface HasTokProps {
   tiktok: TikTokPapiData;
   username?: string;
 }
+
+export interface TikTokUser {
+  id: string;
+  unique_id: string;
+  nickname: string;
+  avatar: string;
+  followers: number;
+  following: number;
+  hearts: number;
+  videos: number;
+}
