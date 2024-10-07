@@ -62,10 +62,10 @@ async function checkIfShouldUpdate(user: any): Promise<boolean> {
 
   const now = new Date();
   const lastUpdated = new Date(user.last_updated);
-  const interval = user.interval * 60 * 60 * 1000; // Convert hours to milliseconds
+  const userInterval = user.user_interval * 60 * 60 * 1000; // Convert hours to milliseconds
   
-  const diff = now.getTime() - lastUpdated.getTime() > interval;
-  console.log(`checkIfShouldUpdate: ${diff} ${now.getTime() - lastUpdated.getTime()} | now: ${now.toISOString()} | lastUpdated: ${lastUpdated.toISOString()} | interval: ${user.interval * 24} hours` );
+  const diff = now.getTime() - lastUpdated.getTime() > userInterval;
+  console.log(`checkIfShouldUpdate: ${diff} ${now.getTime() - lastUpdated.getTime()} | now: ${now.toISOString()} | lastUpdated: ${lastUpdated.toISOString()} | interval: ${user.user_interval * 24} hours` );
   return diff;
 }
 
