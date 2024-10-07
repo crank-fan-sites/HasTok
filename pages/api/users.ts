@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const [users, totalCountResult] = await Promise.all([
       directus.request(
         readItems('tiktok_users', {
-          fields: ['id', 'unique_id', 'nickname', 'avatar', 'followers', 'following', 'hearts', 'videos'],
+          fields: ['id', 'unique_id', 'nickname', 'avatar', 'followers', 'following', 'hearts', 'videos', 'last_video_activity'],
           sort: [`-${sortBy}`],
           limit: Number(pageSize),
           page: Number(page),
@@ -33,8 +33,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         })
       )
     ]);
-
-    const totalUsers = totalCountResult[0]?.count?.id ?? 0;
+    
+    // to avoid having to deal with
+    // "Property 'id' does not exist on type 'string'."
+    let totalUsers = 0;
+    if (totalCountResult.length == 1) {
+      // @ts-ignore: Property 'id' does not exist on type 'string'
+      if (totalCountResult[0].count && 'id' in totalCountResult[0].count) {
+        // @ts-ignore: Property 'id' does not exist on type 'string'
+        totalUsers = totalCountResult[0].count.id ?? 0;
+      }
+    }
 
     res.status(200).json({ users, totalUsers });
   } catch (error) {

@@ -11,7 +11,7 @@ interface UsersPageProps {
   initialUsers: TikTokUser[];
   totalUsers: number;
   pageSize: number;
-  initialSortBy: 'followers' | 'hearts';
+  initialSortBy: 'followers' | 'hearts' | 'last_video_activity';
 }
 
 const UsersPage: React.FC<UsersPageProps> = ({ initialUsers, totalUsers: initialTotalUsers, pageSize, initialSortBy }) => {
@@ -20,8 +20,7 @@ const UsersPage: React.FC<UsersPageProps> = ({ initialUsers, totalUsers: initial
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [sortBy, setSortBy] = useState<'followers' | 'hearts'>(initialSortBy);
-  const [isSwitchingSort, setIsSwitchingSort] = useState(false);
+  const [sortBy, setSortBy] = useState<'followers' | 'hearts' | 'last_video_activity'>(initialSortBy);
 
   useEffect(() => {
     console.log('Initial users:', initialUsers);
@@ -30,8 +29,8 @@ const UsersPage: React.FC<UsersPageProps> = ({ initialUsers, totalUsers: initial
     setHasMore((initialUsers?.length || 0) < initialTotalUsers);
   }, [initialUsers, initialTotalUsers]);
 
-  const fetchUsers = useCallback(async (newSortBy: 'followers' | 'hearts') => {
-    setIsSwitchingSort(true);
+  const fetchUsers = useCallback(async (newSortBy: 'followers' | 'hearts' | 'last_video_activity') => {
+    setIsLoading(true);
     try {
       console.log('Fetching users with sortBy:', newSortBy);
       const response = await fetch(`/api/users?page=1&pageSize=${pageSize}&sortBy=${newSortBy}`);
@@ -45,7 +44,7 @@ const UsersPage: React.FC<UsersPageProps> = ({ initialUsers, totalUsers: initial
     } catch (error) {
       console.error('Error fetching users:', error);
     } finally {
-      setIsSwitchingSort(false);
+      setIsLoading(false);
     }
   }, [pageSize]);
 
@@ -55,9 +54,23 @@ const UsersPage: React.FC<UsersPageProps> = ({ initialUsers, totalUsers: initial
     }
   }, [sortBy, fetchUsers]);
 
-  const changeSortBy = (newSortBy: 'followers' | 'hearts') => {
+  const changeSortBy = async (newSortBy: 'followers' | 'hearts' | 'last_video_activity') => {
     if (newSortBy !== sortBy) {
+      setIsLoading(true);
       setSortBy(newSortBy);
+      try {
+        const response = await fetch(`/api/users?page=1&pageSize=${pageSize}&sortBy=${newSortBy}`);
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+        setUsers(data.users);
+        setTotalUsers(data.totalUsers);
+        setPage(1);
+        setHasMore(data.users.length < data.totalUsers);
+      } catch (error) {
+        console.error('Error changing sort:', error);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -101,29 +114,33 @@ const UsersPage: React.FC<UsersPageProps> = ({ initialUsers, totalUsers: initial
               className={`px-4 py-2 rounded mr-2 ${
                 sortBy === 'followers' ? 'bg-green-500 text-white' : 'bg-gray-300 text-black'
               }`}
-              disabled={isSwitchingSort}
+              disabled={isLoading}
             >
               Sort by Followers
             </button>
             <button
               onClick={() => changeSortBy('hearts')}
-              className={`px-4 py-2 rounded ${
+              className={`px-4 py-2 rounded mr-2 ${
                 sortBy === 'hearts' ? 'bg-green-500 text-white' : 'bg-gray-300 text-black'
               }`}
-              disabled={isSwitchingSort}
+              disabled={isLoading}
             >
               Sort by Hearts
+            </button>
+            <button
+              onClick={() => changeSortBy('last_video_activity')}
+              className={`px-4 py-2 rounded ${
+                sortBy === 'last_video_activity' ? 'bg-green-500 text-white' : 'bg-gray-300 text-black'
+              }`}
+              disabled={isLoading}
+            >
+              Sort by Last Video Upload
             </button>
           </div>
           <div className="mb-4 text-center text-white">
             Showing <b className="text-lg text-red-500">{users.length}</b> of <b className="text-lg text-red-500">{totalUsers}</b> users
           </div>
-          {isSwitchingSort ? (
-            <div className="text-center text-white">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-500"></div>
-              <p className="mt-2">Switching sort order...</p>
-            </div>
-          ) : isLoading && users.length === 0 ? (
+          {isLoading && users.length === 0 ? (
             <div className="text-center text-white">Loading...</div>
           ) : (
             <>
