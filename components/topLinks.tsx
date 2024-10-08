@@ -6,7 +6,7 @@ const TopLinks: React.FC = () => {
     { href: 'https://hasanabitv.com', title: 'HasanAbi TV Home' },
     { href: '/', title: 'HasTok Home' },
     { href: '/stats', title: 'HasTok Stats' },
-    { href: '/users', title: 'TikTok Users' },
+    { href: '/users', title: 'HasTok Users' },
   ];
 
   return (

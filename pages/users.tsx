@@ -140,16 +140,6 @@ const UsersPage: React.FC<UsersPageProps> = ({ initialUsers, totalUsers: initial
           <div className="mb-4 text-center text-white">
             Showing <b className="text-lg text-red-500">{users.length}</b> of <b className="text-lg text-red-500">{totalUsers}</b> users
           </div>
-          {isLoading && users.length === 0 ? (
-            <div className="text-center text-white">Loading...</div>
-          ) : (
-            <>
-              <div className="text-center text-white mb-4">
-                {users.length === 0 ? 'No users to display' : `Displaying ${users.length} users`}
-              </div>
-              <TikTokUsers users={users} />
-            </>
-          )}
           {hasMore && (
             <div className="mt-8 flex justify-center">
               <button

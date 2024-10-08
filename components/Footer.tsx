@@ -13,11 +13,11 @@ const Footer: React.FC = () => {
         </Link>
         {' | '}
         <a href="https://twitter.com/hasansproducer" target="_blank" rel="noopener noreferrer">
-          HasanAbi Community Twitter
+          HasanAbi Branded Twitter
         </a>
         {' | '}
         <a href="https://tiktok.com/hasansproducer" target="_blank" rel="noopener noreferrer">
-          HasanAbi Community TikTok
+          HasanAbi Branded TikTok
         </a>
       </p>
     </div>
