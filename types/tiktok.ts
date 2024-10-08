@@ -39,7 +39,7 @@ export interface HasTokProps {
 }
 
 export interface TikTokUser {
-  id: string;
+  id?: string;
   unique_id: string;
   nickname: string;
   avatar: string;
@@ -47,4 +47,5 @@ export interface TikTokUser {
   following: number;
   hearts: number;
   videos: number;
+  last_video_activity?: string | null;
 }

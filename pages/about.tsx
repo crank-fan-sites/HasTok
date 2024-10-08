@@ -2,7 +2,6 @@ import React from 'react';
 import PageHeader from "@/components/PageHeader";
 import Footer from "@/components/Footer";
 import TopLinks from "@/components/topLinks";
-import Link from 'next/link';
 
 const About: React.FC = () => {
   return (
@@ -24,10 +23,10 @@ const About: React.FC = () => {
           It costs roughly $1 per 1000 requests for TikTok API usage. It costs a variable amount of money for the Twitter API upkeep. I pay these out of pocket right now. There&apos;s Patreon/donation coming for support with costs and future development.
         </p>
         <p className="text-white">
-          The HasTok and the overall HasanAbiTV site is still in beta. DM me anywhere for any support, requests, or concerns.
+          I&apos;m looking for people to help contribute and maintain the data for these Hasan fan sites. The HasTok and the overall HasanAbiTV site are still in beta. DM me anywhere for any support, requests, or concerns.
         </p>
         <p className="text-white">
-          I'm using Linear.There is a T0ggles dashboard for the overall roadmap
+          I&apos;m using Linear for task/project management. There is a T0ggles dashboard for the overall roadmap.
         </p>
       </div>
 

@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createDirectus, rest, authentication, readItems, aggregate } from '@directus/sdk';
-import { TikTokUser } from '@/types/tiktok';
 
 if (!process.env.DIRECTUS_URL) throw new Error('DIRECTUS_URL is not defined');
 const directus = createDirectus(process.env.DIRECTUS_URL)
@@ -38,9 +37,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // "Property 'id' does not exist on type 'string'."
     let totalUsers = 0;
     if (totalCountResult.length == 1) {
-      // @ts-ignore: Property 'id' does not exist on type 'string'
+      // @ts-expect-error: Property 'id' does not exist on type 'string'
       if (totalCountResult[0].count && 'id' in totalCountResult[0].count) {
-        // @ts-ignore: Property 'id' does not exist on type 'string'
+        // @ts-expect-error: Property 'id' does not exist on type 'string'
         totalUsers = totalCountResult[0].count.id ?? 0;
       }
     }
