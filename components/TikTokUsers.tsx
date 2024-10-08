@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import Image from 'next/image';
 import { TikTokUser } from '@/types/tiktok';
+import { formatDistanceToNow } from 'date-fns';
 
 interface TikTokUsersProps {
   users: TikTokUser[];
@@ -37,6 +38,11 @@ const TikTokUsers: NextPage<TikTokUsersProps> = ({ users }) => {
               <div>Videos: {user.videos.toLocaleString()}</div>
             </div>
           </div>
+          {user.last_video_activity && (
+            <div className="mt-2 text-sm text-white bg-green-600 p-2 text-center">
+              Last activity: {formatDistanceToNow(new Date(user.last_video_activity), { addSuffix: true })}
+            </div>
+          )}
         </div>
       ))}
     </div>
