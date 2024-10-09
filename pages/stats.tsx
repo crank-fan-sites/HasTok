@@ -55,7 +55,7 @@ const TikTokStatsPage: React.FC<TikTokStatsPageProps> = ({ tiktokStats }) => {
         <meta name="description" content="View detailed TikTok statistics on HasTok" />
       </Head>
       <div className="bg-scanlines bg-custom-purple">
-      <PageHeader>HasTok Community Stats</PageHeader>
+      <PageHeader title="HasTok Community Stats" />
       <TopLinks />
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">

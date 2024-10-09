@@ -6,7 +6,7 @@ import TopLinks from "@/components/topLinks";
 const About: React.FC = () => {
   return (
     <div className="bg-scanlines bg-custom-purple"> {/* Base background */}
-      <PageHeader>About HasTok</PageHeader>
+      <PageHeader title="About HasTok" />
       <TopLinks />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <p className="text-white">

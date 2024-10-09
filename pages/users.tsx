@@ -105,7 +105,7 @@ const UsersPage: React.FC<UsersPageProps> = ({ initialUsers, totalUsers: initial
         <meta name="description" content="View TikTok users on HasTok" />
       </Head>
       <div className="bg-scanlines bg-custom-purple">
-        <PageHeader>HasTok Users</PageHeader>
+        <PageHeader title="HasTok Users" />
         <TopLinks />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-4 text-center text-white">

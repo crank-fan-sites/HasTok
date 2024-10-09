@@ -2,8 +2,8 @@ import Head from 'next/head';
 
 import { useState, useCallback, useEffect } from 'react';
 
-import PageHeader from '../components/PageHeader';
-import Footer from '../components/Footer';
+import PageHeader from '@/components/PageHeader';
+import Footer from '@/components/Footer';
 
 import TiktokVideos from "@/components/tiktok/videos";
 import { HasTokProps, TikTokVideoType } from '@/types/tiktok';
@@ -91,7 +91,7 @@ const HasTok: React.FC<HasTokProps> = ({ tiktok }) => {
         <meta name="description" content="View and interact with TikTok videos on HasTok" />
       </Head>
       <div className="bg-scanlines bg-custom-purple"> {/* Base background */}
-        <PageHeader>HasTok</PageHeader>
+        <PageHeader title="HasTok" />
         <TopLinks />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-4 text-center text-white">
