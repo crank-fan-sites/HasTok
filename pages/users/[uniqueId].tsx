@@ -1,17 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
-import { createDirectus, rest, authentication, readItems, aggregate } from '@directus/sdk';
 import PageHeader from '@/components/PageHeader';
 import Footer from '@/components/Footer';
 import TopLinks from '@/components/topLinks';
 import TiktokVideos from '@/components/tiktok/videos';
 import { TikTokUser, TikTokVideoType } from '@/types/tiktok';
 import Head from 'next/head';
-import { GetServerSideProps } from 'next';
-
-if (!process.env.NEXT_PUBLIC_DIRECTUS_URL) throw new Error('DIRECTUS_URL is not defined');
-const directus = createDirectus(process.env.NEXT_PUBLIC_DIRECTUS_URL)
-  .with(rest())
-  .with(authentication());
+import { GetStaticProps, GetStaticPaths } from 'next';
 
 interface UserPageProps {
   user: TikTokUser;
@@ -254,65 +248,68 @@ const UserPage: React.FC<UserPageProps> = ({ user, initialVideos, totalVideos, p
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { uniqueId } = context.params as { uniqueId: string };
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: 'blocking'
+  };
+};
 
+export const getStaticProps = async ({ params }: { params: { uniqueId: string } }) => {
   try {
-    const email = process.env.DIRECTUS_ADMIN_EMAIL;
-    const password = process.env.DIRECTUS_ADMIN_PASSWORD;
-    if (!email || !password) {
-      throw new Error('Directus admin credentials are not set in environment variables');
-    }
-    await directus.login(email, password);
+    const { uniqueId } = params;
+    console.log('Fetching data for uniqueId:', uniqueId);
 
-    const users = await directus.request(
-      readItems('tiktok_users', {
-        filter: { unique_id: uniqueId },
-        limit: 1,
-      })
-    );
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    console.log('API URL:', apiUrl);
 
-    if (!users || users.length === 0) {
+    // Fetch user data from your API
+    const userRes = await fetch(`${apiUrl}/api/users?uniqueId=${uniqueId}`);
+    if (!userRes.ok) throw new Error(`Failed to fetch user data: ${userRes.status} ${userRes.statusText}`);
+    const userData = await userRes.json();
+
+    if (!userData.user) {
       return { notFound: true };
     }
 
-    const user = users[0];
+    const user = userData.user;
 
     const initialSortBy = 'created';
     const pageSize = 24;
 
-    const [initialVideos, totalCountResult] = await Promise.all([
-      directus.request(
-        readItems('tiktok_videos', {
-          filter: { author: { unique_id: uniqueId } },
-          sort: [`-${initialSortBy}`],
-          limit: pageSize,
-          fields: ['*', 'author.*'],
-        })
-      ),
-      directus.request(
-        aggregate('tiktok_videos', {
-          aggregate: { count: 'id' },
-          filter: { author: { unique_id: uniqueId } },
-        })
-      )
-    ]);
-
-    // @ts-expect-error: Property 'id' does not exist on type 'string'
-    const totalVideos = totalCountResult[0]?.count?.id ?? 0;
+    // Fetch initial videos and total count from your API
+    const videosRes = await fetch(`${apiUrl}/api/videos?username=${uniqueId}&page=1&pageSize=${pageSize}&sortBy=${initialSortBy}`);
+    if (!videosRes.ok) throw new Error(`Failed to fetch videos: ${videosRes.status} ${videosRes.statusText}`);
+    const { videos: initialVideos, totalVideos } = await videosRes.json();
 
     return {
       props: {
         user,
-        initialVideos,
-        totalVideos,
+        initialVideos: initialVideos || [], // Ensure this is never undefined
+        totalVideos: totalVideos || 0, // Ensure this is never undefined
         pageSize,
         initialSortBy,
       },
+      revalidate: 3600, // Revalidate every hour
     };
   } catch (error) {
-    console.error('Error fetching user data:', error);
-    return { notFound: true };
+    console.error('Error in getStaticProps:', error);
+    if (error instanceof Error) {
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    // Return a fallback object with empty/null values
+    return {
+      props: {
+        user: null,
+        initialVideos: [],
+        totalVideos: 0,
+        pageSize: 24,
+        initialSortBy: 'created',
+      },
+      revalidate: 3600,
+    };
   }
 };
 

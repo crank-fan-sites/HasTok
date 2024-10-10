@@ -173,7 +173,7 @@ const UsersPage: React.FC<UsersPageProps> = ({ initialUsers, totalUsers: initial
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps = async () => {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users?page=1&pageSize=20&sortBy=followers`);
     if (!response.ok) throw new Error('Failed to fetch');
@@ -186,9 +186,10 @@ export const getServerSideProps: GetServerSideProps = async () => {
         pageSize: 20,
         initialSortBy: 'followers',
       },
+      revalidate: 60 * 60, // every hour
     };
   } catch (error) {
-    console.error('Error in getServerSideProps:', error);
+    console.error('Error in getStaticProps:', error);
     return {
       props: {
         initialUsers: [],
@@ -196,6 +197,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
         pageSize: 20,
         initialSortBy: 'followers',
       },
+      revalidate: 3600, // Revalidate every hour (3600 seconds)
     };
   }
 };
