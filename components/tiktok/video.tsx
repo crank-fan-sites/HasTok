@@ -8,7 +8,11 @@ import { TikTokVideoType } from "../../types/tiktok";
 
 const fallbackImageUrl = "/red-eyes.jpg";
 
-const TikTokVideo: NextPage<TikTokVideoType> = ({
+interface TikTokVideoProps extends TikTokVideoType {
+  internal?: boolean;
+}
+
+const TikTokVideo: NextPage<TikTokVideoProps> = ({
   tiktok_id,
   author,
   created,
@@ -20,6 +24,7 @@ const TikTokVideo: NextPage<TikTokVideoType> = ({
   shares,
   cover,
   duration,
+  internal = true,
 }) => {
   const formatDuration = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -29,6 +34,26 @@ const TikTokVideo: NextPage<TikTokVideoType> = ({
     }
     return `${minutes}m ${remainingSeconds}s`;
   };
+
+  const AuthorContent = () => (
+    <>
+      <div className="relative w-10 h-10 mr-2">
+        <Image 
+          src={author.avatar || fallbackImageUrl}
+          alt={author.unique_id} 
+          fill
+          style={{ objectFit: "cover" }}
+          className="rounded-full"
+          unoptimized={true}
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = fallbackImageUrl;
+          }}
+        />
+      </div>
+      <h2 className="font-bold text-lg text-white truncate max-w-[200px]">{author.nickname}</h2>
+    </>
+  );
 
   return (
     <div className="relative h-auto">
@@ -62,28 +87,18 @@ const TikTokVideo: NextPage<TikTokVideoType> = ({
         </div>
         <div className="p-4 flex flex-col flex-grow">
           <div className="flex items-center justify-between mb-2">
-            <a 
-              href={`https://tiktok.com/@${author.unique_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center"
-            >
-              <div className="relative w-10 h-10 mr-2">
-                <Image 
-                  src={author.avatar || fallbackImageUrl}
-                  alt={author.unique_id} 
-                  fill
-                  style={{ objectFit: "cover" }}
-                  className="rounded-full"
-                  unoptimized={true}
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = fallbackImageUrl;
-                  }}
-                />
+            {internal ? (
+              <a 
+                href={`/users/${author.unique_id}`}
+                className="flex items-center"
+              >
+                <AuthorContent />
+              </a>
+            ) : (
+              <div className="flex items-center">
+                <AuthorContent />
               </div>
-              <h2 className="font-bold text-lg text-white truncate max-w-[200px]">{author.nickname}</h2>
-            </a>
+            )}
           </div>
           <p className="text-sm mb-4 overflow-hidden max-h-[8.4em] line-clamp-6 text-gray-300 italic">{desc}</p>
           <div className="mt-auto">

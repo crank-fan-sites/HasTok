@@ -14,21 +14,29 @@ const TikTokUsers: NextPage<TikTokUsersProps> = ({ users }) => {
         <div key={user.id} className="bg-gray-800 rounded-lg shadow-md overflow-hidden">
           <div className="p-4">
             <div className="flex items-center mb-4">
-              <Image
-                src={user.avatar || '/red-eyes.jpg'}
-                alt={user.nickname}
-                width={50}
-                height={50}
-                className="rounded-full mr-4"
-                unoptimized={true}
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = '/red-eyes.jpg';
-                }}
-              />
+              <a 
+                href={`/users/${user.unique_id}`}
+              >
+                <Image
+                  src={user.avatar || '/red-eyes.jpg'}
+                  alt={user.nickname}
+                  width={50}
+                  height={50}
+                  className="rounded-full mr-4"
+                  unoptimized={true}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/red-eyes.jpg';
+                  }}
+                />
+              </a>
               <div>
-                <h2 className="text-xl font-bold text-white">{user.nickname}</h2>
-                <p className="text-gray-400">@{user.unique_id}</p>
+                <a 
+                  href={`/users/${user.unique_id}`}
+                >
+                  <h2 className="text-xl font-bold text-white">{user.nickname}</h2>
+                  <p className="text-gray-400">@{user.unique_id}</p>
+                </a>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-2 text-sm text-white">
@@ -40,7 +48,11 @@ const TikTokUsers: NextPage<TikTokUsersProps> = ({ users }) => {
           </div>
           {user.last_video_activity && (
             <div className="mt-2 text-sm text-white bg-green-600 p-2 text-center">
-              Last activity: {formatDistanceToNow(new Date(user.last_video_activity), { addSuffix: true })}
+              <a 
+                href={`/users/${user.unique_id}`}
+              >
+                Last activity: {formatDistanceToNow(new Date(user.last_video_activity), { addSuffix: true })}
+              </a>
             </div>
           )}
         </div>

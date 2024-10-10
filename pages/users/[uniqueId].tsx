@@ -6,6 +6,7 @@ import TopLinks from '@/components/topLinks';
 import TiktokVideos from '@/components/tiktok/videos';
 import { TikTokUser, TikTokVideoType } from '@/types/tiktok';
 import Head from 'next/head';
+import { GetServerSideProps } from 'next';
 
 if (!process.env.NEXT_PUBLIC_DIRECTUS_URL) throw new Error('DIRECTUS_URL is not defined');
 const directus = createDirectus(process.env.NEXT_PUBLIC_DIRECTUS_URL)
@@ -98,14 +99,32 @@ const UserPage: React.FC<UserPageProps> = ({ user, initialVideos, totalVideos, p
           <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden mb-8">
             <div className="p-6">
               <div className="flex items-center mb-4">
-                <img
-                  src={user.avatar || '/red-eyes.jpg'}
-                  alt={user.nickname}
-                  className="w-24 h-24 rounded-full mr-4"
-                />
+                <a 
+                  href={`https://tiktok.com/@${user.unique_id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src={user.avatar || '/red-eyes.jpg'}
+                    alt={user.nickname}
+                    className="w-24 h-24 rounded-full mr-4"
+                  />
+                </a>
                 <div>
-                  <h2 className="text-2xl font-bold text-white">{user.nickname}</h2>
-                  <p className="text-gray-400">@{user.unique_id}</p>
+                  <a 
+                    href={`https://tiktok.com/@${user.unique_id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <h2 className="text-2xl font-bold text-white">{user.nickname}</h2>
+                  </a>
+                  <a 
+                    href={`https://tiktok.com/@${user.unique_id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <p className="text-gray-400">@{user.unique_id}</p>
+                  </a>
                 </div>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
@@ -207,7 +226,7 @@ const UserPage: React.FC<UserPageProps> = ({ user, initialVideos, totalVideos, p
           ) : isLoading && videos.length === 0 ? (
             <div className="text-center text-white">Loading...</div>
           ) : (
-            <TiktokVideos feed={videos} />
+            <TiktokVideos feed={videos} internal={false} />
           )}
           {hasMore && (
             <div className="mt-8 flex justify-center">
@@ -279,6 +298,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       )
     ]);
 
+    // @ts-expect-error: Property 'id' does not exist on type 'string'
     const totalVideos = totalCountResult[0]?.count?.id ?? 0;
 
     return {

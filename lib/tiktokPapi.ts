@@ -45,6 +45,7 @@ export async function getTikTokData(pageSize: number, sortBy: 'created' | 'plays
       )
     ]);
     
+    // why does this not need // @ts-expect-error: Property 'id' does not exist on type 'string'
     const totalVideos = totalCountResult[0]?.count?.id ?? 0;
 
     console.log(`Fetched ${initialVideos.length} initial TikTok videos. Total videos: ${totalVideos}`);

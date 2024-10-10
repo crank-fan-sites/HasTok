@@ -35,14 +35,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     
     // to avoid having to deal with
     // "Property 'id' does not exist on type 'string'."
-    let totalUsers = 0;
-    if (totalCountResult.length == 1) {
-      // @ts-expect-error: Property 'id' does not exist on type 'string'
-      if (totalCountResult[0].count && 'id' in totalCountResult[0].count) {
-        // @ts-expect-error: Property 'id' does not exist on type 'string'
-        totalUsers = totalCountResult[0].count.id ?? 0;
-      }
-    }
+    // @ts-expect-error: Property 'id' does not exist on type 'string'
+    const totalUsers = totalCountResult[0]?.count?.id ?? 0;
 
     res.status(200).json({ users, totalUsers });
   } catch (error) {
