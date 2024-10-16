@@ -27,22 +27,28 @@ const UserPage: React.FC<UserPageProps> = ({ user, initialVideos, totalVideos, p
   const fetchVideos = useCallback(async (newSortBy: 'created' | 'plays', newDateFilter: 'day' | 'week' | 'month' | 'year' | 'all') => {
     setIsSwitchingSort(true);
     try {
+      if (!user) {
+        console.error('User data is missing in fetchVideos');
+        return;
+      }
       const response = await fetch(`/api/videos?page=1&pageSize=${pageSize}&sortBy=${newSortBy}&dateFilter=${newDateFilter}&usernames=${user.unique_id}`);
       if (!response.ok) throw new Error('Failed to fetch');
-      const newVideos = await response.json();
-      setVideos(newVideos);
+      const data = await response.json();
+      setVideos(data.videos);
       setPage(1);
-      setHasMore(newVideos.length < totalVideos);
+      setHasMore(data.videos.length < data.totalVideos);
     } catch (error) {
       console.error('Error fetching videos:', error);
     } finally {
       setIsSwitchingSort(false);
     }
-  }, [pageSize, totalVideos, user.unique_id]);
+  }, [pageSize, user]);
 
   useEffect(() => {
-    fetchVideos(sortBy, dateFilter);
-  }, [sortBy, dateFilter, fetchVideos]);
+    if (user) {
+      fetchVideos(sortBy, dateFilter);
+    }
+  }, [sortBy, dateFilter, fetchVideos, user]);
 
   const changeSortBy = (newSortBy: 'created' | 'plays') => {
     if (newSortBy !== sortBy) {
@@ -57,18 +63,19 @@ const UserPage: React.FC<UserPageProps> = ({ user, initialVideos, totalVideos, p
   };
 
   const loadMoreVideos = useCallback(async () => {
-    if (isLoading || !hasMore) return;
+    if (isLoading || !hasMore || !user) return;
     setIsLoading(true);
     const nextPage = page + 1;
     try {
       const response = await fetch(`/api/videos?page=${nextPage}&pageSize=${pageSize}&sortBy=${sortBy}&dateFilter=${dateFilter}&usernames=${user.unique_id}`);
       if (!response.ok) throw new Error('Failed to fetch');
-      const newVideos = await response.json();
+      const data = await response.json();
+      const newVideos = data.videos;
 
       if (newVideos && newVideos.length > 0) {
         setVideos(prevVideos => [...prevVideos, ...newVideos]);
         setPage(nextPage);
-        setHasMore((videos.length + newVideos.length) < totalVideos);
+        setHasMore((videos.length + newVideos.length) < data.totalVideos);
       } else {
         setHasMore(false);
       }
@@ -78,7 +85,18 @@ const UserPage: React.FC<UserPageProps> = ({ user, initialVideos, totalVideos, p
     } finally {
       setIsLoading(false);
     }
-  }, [page, pageSize, isLoading, hasMore, videos.length, totalVideos, sortBy, dateFilter, user.unique_id]);
+  }, [page, pageSize, isLoading, hasMore, videos.length, sortBy, dateFilter, user]);
+
+  if (!user) {
+    return (
+      <div className="bg-scanlines bg-custom-purple min-h-screen flex items-center justify-center">
+        <div className="text-white text-center">
+          <h1 className="text-4xl font-bold mb-4">User Data Error</h1>
+          <p>Sorry, we encountered an error while loading the user data. Please try again later.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -255,9 +273,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps = async ({ params }: { params: { uniqueId: string } }) => {
+export const getStaticProps: GetStaticProps = async (context) => {
   try {
-    const { uniqueId } = params;
+    const uniqueId = context.params?.uniqueId;
+    if (typeof uniqueId !== 'string') {
+      throw new Error('Invalid uniqueId');
+    }
     console.log('Fetching data for uniqueId:', uniqueId);
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';

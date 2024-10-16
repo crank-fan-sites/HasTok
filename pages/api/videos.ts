@@ -1,11 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { createDirectus, rest, authentication, readItems } from '@directus/sdk';
+import { createDirectus, rest, authentication, readItems, aggregate } from '@directus/sdk';
 
 if (!process.env.DIRECTUS_URL) throw new Error('DIRECTUS_URL is not defined');
 const directus = createDirectus(process.env.DIRECTUS_URL)
   .with(rest())
   .with(authentication());
+
+interface FilterType {
+  created?: {
+    _gte: string;
+  };
+  author?: {
+    unique_id: {
+      _in: string | string[];
+    };
+  };
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -18,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const validSortBy = ['created', 'plays'].includes(sortBy as string) ? sortBy : 'created';
 
   // Calculate the date for filtering
-  let filterDate;
+  let filterDate: Date | null = null;
   const day = 24 * 60 * 60 * 1000;
   switch (dateFilter) {
     case 'day':
@@ -33,19 +43,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     case 'year':
       filterDate = new Date(Date.now() - 365 * day);
       break;
-    default:
-      filterDate = null;
   }
 
   try {
-  const email = process.env.DIRECTUS_ADMIN_EMAIL;
-  const password = process.env.DIRECTUS_ADMIN_PASSWORD;
-  if (!email || !password) {
-    throw new Error('Directus admin credentials are not set in environment variables');
-  }
-  await directus.login(email, password);
+    const email = process.env.DIRECTUS_ADMIN_EMAIL;
+    const password = process.env.DIRECTUS_ADMIN_PASSWORD;
+    if (!email || !password) {
+      throw new Error('Directus admin credentials are not set in environment variables');
+    }
+    await directus.login(email, password);
 
-    const filter: any = {};
+    const filter: FilterType = {};
     if (filterDate) {
       filter.created = {
         _gte: filterDate.toISOString(),
@@ -54,26 +62,38 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (usernames) {
       filter.author = {
         unique_id: {
-          _in: usernames
-        }
+          _in: Array.isArray(usernames) ? usernames : [usernames as string],
+        },
       };
     }
 
     console.log('Filter:', JSON.stringify(filter, null, 2)); // Debug log
 
-    const videos = await directus.request(
-      readItems('tiktok_videos', {
-        limit: Number(pageSize),
-        page: Number(page),
-        fields: ['*', 'author.*'],
-        sort: [`-${validSortBy}`],
-        filter: filter,
-      })
-    );
+    const [videos, totalCount] = await Promise.all([
+      directus.request(
+        readItems('tiktok_videos', {
+          limit: Number(pageSize),
+          page: Number(page),
+          fields: ['*', 'author.*'],
+          sort: [`-${validSortBy}`],
+          filter: filter,
+        })
+      ),
+      directus.request(
+        aggregate('tiktok_videos', {
+          aggregate: { count: '*' },
+          filter: filter,
+        })
+      )
+    ]);
 
     console.log(`Fetched ${videos.length} videos`); // Debug log
+    console.log(`Total videos: ${totalCount[0].count}`); // Debug log
 
-    res.status(200).json(videos);
+    res.status(200).json({
+      videos,
+      totalVideos: totalCount[0].count,
+    });
   } catch (error) {
     console.error('Error fetching videos:', error);
     res.status(500).json({ message: 'Error fetching videos' });
