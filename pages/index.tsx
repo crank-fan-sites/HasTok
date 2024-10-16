@@ -4,7 +4,7 @@ import { HasTokProps } from "@/types/tiktok";
 import { getTikTokData } from "@/lib/tiktokPapi"
 
 const Home: NextPage<HasTokProps> = (props) => {
-  return <HasTok tiktok={props.tiktok } />;
+  return <HasTok tiktok={props.tiktok} />;
 };
 
 export const getStaticProps: GetStaticProps<HasTokProps> = async () => {
@@ -17,7 +17,7 @@ export const getStaticProps: GetStaticProps<HasTokProps> = async () => {
       props: {
         tiktok: tiktokData,
       },
-      revalidate: 60 * 5, // 5 min
+      revalidate: 60 * 30
     };
   } catch (error) {
     console.error('Error in getStaticProps:', error);
@@ -32,7 +32,7 @@ export const getStaticProps: GetStaticProps<HasTokProps> = async () => {
           usernames: null,
         },
       },
-      revalidate: 60 * 5
+      revalidate: 60 * 5,
     };
   }
 };

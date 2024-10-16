@@ -5,7 +5,6 @@ import TikTokUsers from "@/components/TikTokUsers";
 import TopLinks from "@/components/topLinks";
 import Footer from "@/components/Footer";
 import { TikTokUser } from '@/types/tiktok';
-import { GetServerSideProps } from 'next';
 
 interface UsersPageProps {
   initialUsers: TikTokUser[];

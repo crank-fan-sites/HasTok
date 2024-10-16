@@ -90,7 +90,7 @@ export const getStaticProps: GetStaticProps<TikTokStatsPageProps> = async () => 
       props: {
         tiktokStats,
       },
-      revalidate: 60 * 5, // 5 min
+      revalidate: 60 * 60, // 1 hour
     };
   } catch (error) {
     console.error('Error in getStaticProps:', error);

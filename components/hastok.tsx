@@ -30,7 +30,7 @@ const HasTok: React.FC<HasTokProps> = ({ tiktok }) => {
     setIsSwitchingSort(true);
     try {
       const usernamesParam = usernames && usernames.length > 0 ? `&usernames=${usernames.join(',')}` : '';
-      const response = await fetch(`/api/videos?page=1&pageSize=${pageSize}&sortBy=${newSortBy}&dateFilter=${newDateFilter}${usernamesParam}`);
+      const response = await fetch(`/api/oldVideos?page=1&pageSize=${pageSize}&sortBy=${newSortBy}&dateFilter=${newDateFilter}${usernamesParam}`);
       if (!response.ok) throw new Error('Failed to fetch');
       const newVideos = await response.json();
       setVideos(newVideos);
@@ -65,7 +65,7 @@ const HasTok: React.FC<HasTokProps> = ({ tiktok }) => {
     const nextPage = page + 1;
     try {
       const usernamesParam = usernames && usernames.length > 0 ? `&usernames=${usernames.join(',')}` : '';
-      const response = await fetch(`/api/videos?page=${nextPage}&pageSize=${pageSize}&sortBy=${sortBy}&dateFilter=${dateFilter}${usernamesParam}`);
+      const response = await fetch(`/api/oldVideos?page=${nextPage}&pageSize=${pageSize}&sortBy=${sortBy}&dateFilter=${dateFilter}${usernamesParam}`);
       if (!response.ok) throw new Error('Failed to fetch');
       const newVideos = await response.json();
 
