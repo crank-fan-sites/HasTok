@@ -174,7 +174,15 @@ const UsersPage: React.FC<UsersPageProps> = ({ initialUsers, totalUsers: initial
 
 export const getStaticProps = async () => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users?page=1&pageSize=20&sortBy=followers`);
+    // Determine the base URL
+    const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+    const host = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_API_HOST || 'localhost:3000';
+    const baseUrl = `${protocol}://${host}`;
+    
+    const apiUrl = `${baseUrl}/api/users?page=1&pageSize=20&sortBy=followers`;
+    console.log('Fetching from URL:', apiUrl);
+
+    const response = await fetch(apiUrl);
     if (!response.ok) throw new Error('Failed to fetch');
     const data = await response.json();
 
@@ -185,7 +193,7 @@ export const getStaticProps = async () => {
         pageSize: 20,
         initialSortBy: 'followers',
       },
-      revalidate: 60 * 60, // every hour
+      revalidate: 3600, // Revalidate every hour
     };
   } catch (error) {
     console.error('Error in getStaticProps:', error);
@@ -196,7 +204,7 @@ export const getStaticProps = async () => {
         pageSize: 20,
         initialSortBy: 'followers',
       },
-      revalidate: 3600, // Revalidate every hour (3600 seconds)
+      revalidate: 3600, // Revalidate every hour
     };
   }
 };

@@ -279,13 +279,13 @@ export const getStaticProps: GetStaticProps = async (context) => {
     if (typeof uniqueId !== 'string') {
       throw new Error('Invalid uniqueId');
     }
-    console.log('Fetching data for uniqueId:', uniqueId);
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-    console.log('API URL:', apiUrl);
+    const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+    const host = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_API_HOST || 'localhost:3000';
+    const baseUrl = `${protocol}://${host}`;
 
     // Fetch user data from your API
-    const userRes = await fetch(`${apiUrl}/api/users?uniqueId=${uniqueId}`);
+    const userRes = await fetch(`${baseUrl}/api/users?uniqueId=${uniqueId}`);
     if (!userRes.ok) throw new Error(`Failed to fetch user data: ${userRes.status} ${userRes.statusText}`);
     const userData = await userRes.json();
 
@@ -299,7 +299,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     const pageSize = 24;
 
     // Fetch initial videos and total count from your API
-    const videosRes = await fetch(`${apiUrl}/api/videos?username=${uniqueId}&page=1&pageSize=${pageSize}&sortBy=${initialSortBy}`);
+    const videosRes = await fetch(`${baseUrl}/api/videos?username=${uniqueId}&page=1&pageSize=${pageSize}&sortBy=${initialSortBy}`);
     if (!videosRes.ok) throw new Error(`Failed to fetch videos: ${videosRes.status} ${videosRes.statusText}`);
     const { videos: initialVideos, totalVideos } = await videosRes.json();
 
